@@ -1,0 +1,17 @@
+/home/vichukano/programming/java/trainer-bot/trainer-bot-app/src/main/java/ru/vichukano/trainer/bot/telegram/handler/InlineKeyboardHandler.java
+/home/vichukano/programming/java/trainer-bot/trainer-bot-app/src/main/java/ru/vichukano/trainer/bot/telegram/TrainerBot.java
+/home/vichukano/programming/java/trainer-bot/trainer-bot-app/src/main/java/ru/vichukano/trainer/bot/telegram/handler/SelectExerciseHandler.java
+/home/vichukano/programming/java/trainer-bot/trainer-bot-app/src/main/java/ru/vichukano/trainer/bot/fsm/BotStateMachine.java
+/home/vichukano/programming/java/trainer-bot/trainer-bot-app/src/main/java/ru/vichukano/trainer/bot/telegram/handler/SelectRepsHandler.java
+/home/vichukano/programming/java/trainer-bot/trainer-bot-app/src/main/java/ru/vichukano/trainer/bot/telegram/handler/ReplyKeyboardHandler.java
+/home/vichukano/programming/java/trainer-bot/trainer-bot-app/src/main/java/ru/vichukano/trainer/bot/config/AppConfigDto.java
+/home/vichukano/programming/java/trainer-bot/trainer-bot-app/src/main/java/ru/vichukano/trainer/bot/telegram/handler/SelectSexHandler.java
+/home/vichukano/programming/java/trainer-bot/trainer-bot-app/src/main/java/ru/vichukano/trainer/bot/fsm/state/State.java
+/home/vichukano/programming/java/trainer-bot/trainer-bot-app/src/main/java/ru/vichukano/trainer/bot/telegram/keyboard/KeyboardFactory.java
+/home/vichukano/programming/java/trainer-bot/trainer-bot-app/src/main/java/ru/vichukano/trainer/bot/factory/Button.java
+/home/vichukano/programming/java/trainer-bot/trainer-bot-app/src/main/java/ru/vichukano/trainer/bot/telegram/handler/FinishTrainingHandler.java
+/home/vichukano/programming/java/trainer-bot/trainer-bot-app/src/main/java/ru/vichukano/trainer/bot/telegram/handler/StartTrainingHandler.java
+/home/vichukano/programming/java/trainer-bot/trainer-bot-app/src/main/java/ru/vichukano/trainer/bot/telegram/handler/SelectWeightHandler.java
+/home/vichukano/programming/java/trainer-bot/trainer-bot-app/src/main/java/ru/vichukano/trainer/bot/telegram/handler/CreateUserHandler.java
+/home/vichukano/programming/java/trainer-bot/trainer-bot-app/src/main/java/ru/vichukano/trainer/bot/telegram/handler/TextMessageHandler.java
+/home/vichukano/programming/java/trainer-bot/trainer-bot-app/src/main/java/ru/vichukano/trainer/bot/Main.java

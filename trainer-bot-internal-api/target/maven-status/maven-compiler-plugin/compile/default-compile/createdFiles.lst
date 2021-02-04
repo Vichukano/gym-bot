@@ -1,0 +1,4 @@
+ru/vichukano/telegram/bot/internal/api/fsm/HandlerProvider.class
+ru/vichukano/telegram/bot/internal/api/handler/BotMessageHandler.class
+ru/vichukano/telegram/bot/internal/api/dao/GenericDao.class
+ru/vichukano/telegram/bot/internal/api/config/Config.class
