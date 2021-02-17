@@ -4,7 +4,7 @@ import lombok.experimental.UtilityClass;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @UtilityClass
-public class MsgUtils {
+public class MessageUtils {
 
     public static String chatId(Update u) {
         return String.valueOf(u.getMessage().getChatId());
