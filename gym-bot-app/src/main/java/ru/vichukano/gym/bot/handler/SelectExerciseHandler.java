@@ -8,9 +8,6 @@ import ru.vichukano.gym.bot.domain.State;
 import ru.vichukano.gym.bot.domain.dto.Exercise;
 import ru.vichukano.gym.bot.domain.dto.User;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-
 import static ru.vichukano.gym.bot.domain.Exercise.*;
 import static ru.vichukano.gym.bot.store.UserStore.USER_STORE;
 import static ru.vichukano.gym.bot.util.MessageUtils.*;
@@ -26,26 +23,22 @@ public class SelectExerciseHandler implements MessageHandler {
         String text = text(message);
         if (BENCH_PRESS.getCommand().equals(text)) {
             out.setText("Start to bench. Input weight");
-            USER_STORE.STATES.put(userId(message), State.SELECT_WEIGHT);
-            User user = USER_STORE.USERS.get(userId(message));
+            User user = USER_STORE.USERS.asMap().get(userId(message));
             user.getTraining().getExercises().add(new Exercise(BENCH_PRESS.name()));
+            user.setState(State.SELECT_WEIGHT);
         } else if (SQUAT.getCommand().equals(text)) {
             out.setText("Start to squat. Input weight");
-            USER_STORE.STATES.put(userId(message), State.SELECT_WEIGHT);
-            User user = USER_STORE.USERS.get(userId(message));
-            user.getTraining().getExercises().add(new Exercise(SQUAT.name()));
+            User user = USER_STORE.USERS.asMap().get(userId(message));
+            user.getTraining().getExercises().add(new Exercise(BENCH_PRESS.name()));
+            user.setState(State.SELECT_WEIGHT);
         } else if (DEAD_LIFT.getCommand().equals(text)) {
             out.setText("Start to lift. Input weight");
-            USER_STORE.STATES.put(userId(message), State.SELECT_WEIGHT);
-            User user = USER_STORE.USERS.get(userId(message));
-            user.getTraining().getExercises().add(new Exercise(DEAD_LIFT.name()));
+            User user = USER_STORE.USERS.asMap().get(userId(message));
+            user.getTraining().getExercises().add(new Exercise(BENCH_PRESS.name()));
+            user.setState(State.SELECT_WEIGHT);
         } else {
             out.setText("Input correct exercise form:"
-                    + BENCH_PRESS.getCommand()
-                    + ", "
-                    + SQUAT.getCommand()
-                    + ", "
-                    + DEAD_LIFT.getCommand()
+                    + printAll()
                     + " or type "
                     + Command.STOP.getCommand()
                     + " for exit");

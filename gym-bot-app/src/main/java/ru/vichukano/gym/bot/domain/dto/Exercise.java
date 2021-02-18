@@ -1,15 +1,24 @@
 package ru.vichukano.gym.bot.domain.dto;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
 import lombok.Value;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
-@Data
-@RequiredArgsConstructor
+@Value
 public class Exercise {
-    private final String name;
-    private BigDecimal weight;
-    private Integer reps;
+    String name;
+    List<BigDecimal> weights = new ArrayList<>();
+    List<Integer> reps = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return name
+                + ", weight: "
+                + weights
+                + ", reps: "
+                + reps;
+    }
 }

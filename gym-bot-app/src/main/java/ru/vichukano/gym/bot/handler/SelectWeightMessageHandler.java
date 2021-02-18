@@ -24,19 +24,20 @@ public class SelectWeightMessageHandler implements MessageHandler {
         out.setChatId(chatId(message));
         String text = text(message);
         if (Arrays.stream(Exercise.values()).map(Exercise::getCommand).anyMatch(c -> c.equals(text))) {
-            USER_STORE.STATES.put(userId(message), SELECT_EXERCISE);
+            USER_STORE.USERS.asMap().get(userId(message)).setState(SELECT_EXERCISE);
             return new SelectExerciseHandler().handle(message);
         }
         try {
             var weight = new BigDecimal(text);
             log.debug("Select weight: {}", weight);
             out.setText("You select " + text + "KG. Select reps for this weight");
-            USER_STORE.STATES.put(userId(message), SELECT_REPS);
-            USER_STORE.USERS.get(userId(message))
-                    .getTraining()
+            User user = USER_STORE.USERS.asMap().get(userId(message));
+            user.getTraining()
                     .getExercises()
                     .getLast()
-                    .setWeight(weight);
+                    .getWeights()
+                    .add(weight);
+            user.setState(SELECT_REPS);
         } catch (Exception e) {
             out.setText("Invalid weight " + text + "! Weight must be digit");
         }

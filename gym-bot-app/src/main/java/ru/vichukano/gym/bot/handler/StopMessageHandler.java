@@ -7,8 +7,8 @@ import ru.vichukano.gym.bot.domain.State;
 import ru.vichukano.gym.bot.domain.dto.Training;
 import ru.vichukano.gym.bot.domain.dto.User;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -26,18 +26,19 @@ public class StopMessageHandler implements MessageHandler {
         out.setChatId(chatId(message));
         String text = text(message);
         if (STOP.getCommand().equals(text)) {
-            User user = USER_STORE.USERS.get(userId(message));
+            User user = USER_STORE.USERS.asMap().get(userId(message));
             Training training = user.getTraining();
             out.setText("Stop training. Your results:\n"
                     + "Training session time: "
-                    + LocalDateTime.now().minus(training.getTime().getMinute(), ChronoUnit.MINUTES)
-                    + "\nExercises: "
+                    + Duration.between(training.getTime(), LocalDateTime.now()).toMinutes()
+                    + " minutes"
+                    + "\nExercises:\n"
                     + training.getExercises().stream().map(Objects::toString).collect(Collectors.joining("\n"))
             );
+            user.setState(State.START_TRAINING);
         } else {
             out.setText("Something goes wrong...");
         }
-        USER_STORE.STATES.put(userId(message), State.START_TRAINING);
         return out;
     }
 

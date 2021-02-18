@@ -1,16 +1,16 @@
 package ru.vichukano.gym.bot.store;
 
-import ru.vichukano.gym.bot.domain.State;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import ru.vichukano.gym.bot.domain.dto.User;
+import ru.vichukano.gym.bot.store.listener.UserRemovalListener;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.time.Duration;
 
-//TODO: Change for cache
 public enum UserStore {
     USER_STORE;
-    public final Map<String, State> STATES = new ConcurrentHashMap<>();
-    public final Map<String, User> USERS = new ConcurrentHashMap<>();
+    public final Cache<String, User> USERS = CacheBuilder.newBuilder()
+            .expireAfterAccess(Duration.ofMinutes(30))
+            .removalListener(new UserRemovalListener())
+            .build();
 }
