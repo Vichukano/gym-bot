@@ -6,7 +6,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Command {
     START("/start"),
-    STOP("/stop");
+    STOP("/stop"),
+    REPORT("/report");
 
     @Getter
     private final String command;

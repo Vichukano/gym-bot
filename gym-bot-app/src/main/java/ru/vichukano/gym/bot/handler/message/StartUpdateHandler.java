@@ -1,17 +1,18 @@
-package ru.vichukano.gym.bot.handler;
+package ru.vichukano.gym.bot.handler.message;
 
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.vichukano.gym.bot.domain.Exercise;
 import ru.vichukano.gym.bot.domain.State;
+import ru.vichukano.gym.bot.handler.UpdateHandler;
 
 import static ru.vichukano.gym.bot.domain.Command.START;
 import static ru.vichukano.gym.bot.store.UserStore.USER_STORE;
 import static ru.vichukano.gym.bot.util.MessageUtils.*;
 
 @Slf4j
-public class StartMessageHandler implements MessageHandler {
+public class StartUpdateHandler implements UpdateHandler<SendMessage> {
 
     @Override
     public SendMessage handle(Update message) {

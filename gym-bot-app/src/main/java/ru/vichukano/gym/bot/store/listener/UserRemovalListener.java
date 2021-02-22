@@ -12,7 +12,7 @@ public class UserRemovalListener implements RemovalListener<String, User> {
     public void onRemoval(RemovalNotification<String, User> notification) {
         User user = notification.getValue();
         //TODO: прикртить сохранине записи о тренировк
-        log.info("User {} rmoved from cache", user);
+        log.info("User {} removed from cache", user);
     }
 
 }

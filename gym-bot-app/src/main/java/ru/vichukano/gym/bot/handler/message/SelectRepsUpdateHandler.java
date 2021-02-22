@@ -1,10 +1,11 @@
-package ru.vichukano.gym.bot.handler;
+package ru.vichukano.gym.bot.handler.message;
 
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.vichukano.gym.bot.domain.Command;
 import ru.vichukano.gym.bot.domain.dto.User;
+import ru.vichukano.gym.bot.handler.UpdateHandler;
 
 import static ru.vichukano.gym.bot.domain.Exercise.printAll;
 import static ru.vichukano.gym.bot.domain.State.SELECT_WEIGHT;
@@ -12,7 +13,7 @@ import static ru.vichukano.gym.bot.store.UserStore.USER_STORE;
 import static ru.vichukano.gym.bot.util.MessageUtils.*;
 
 @Slf4j
-public class SelectRepsMessageHandler implements MessageHandler {
+public class SelectRepsUpdateHandler implements UpdateHandler<SendMessage> {
 
     @Override
     public SendMessage handle(Update message) {
@@ -25,9 +26,9 @@ public class SelectRepsMessageHandler implements MessageHandler {
             log.debug("Select reps: {}", reps);
             out.setText("You select "
                     + text
-                    + "reps. Select weight or "
+                    + "reps.\nSelect weight or "
                     + Command.STOP.getCommand()
-                    + " for finish training or choose another exercise from: "
+                    + " for finish training or choose another exercise from:\n"
                     + printAll());
             User user = USER_STORE.USERS.asMap().get(userId(message));
             user.getTraining()

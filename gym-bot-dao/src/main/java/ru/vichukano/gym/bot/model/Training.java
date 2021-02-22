@@ -1,12 +1,12 @@
-package ru.vichukano.gym.bot.domain.dto;
+package ru.vichukano.gym.bot.model;
 
 import lombok.Value;
 
 import java.time.LocalDateTime;
-import java.util.LinkedList;
+import java.util.List;
 
 @Value
 public class Training {
     LocalDateTime time;
-    LinkedList<Exercise> exercises;
+    List<Exercise> exercises;
 }

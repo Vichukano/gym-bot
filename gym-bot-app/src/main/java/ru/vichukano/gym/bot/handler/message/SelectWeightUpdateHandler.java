@@ -1,10 +1,11 @@
-package ru.vichukano.gym.bot.handler;
+package ru.vichukano.gym.bot.handler.message;
 
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.vichukano.gym.bot.domain.Exercise;
 import ru.vichukano.gym.bot.domain.dto.User;
+import ru.vichukano.gym.bot.handler.UpdateHandler;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -15,7 +16,7 @@ import static ru.vichukano.gym.bot.store.UserStore.USER_STORE;
 import static ru.vichukano.gym.bot.util.MessageUtils.*;
 
 @Slf4j
-public class SelectWeightMessageHandler implements MessageHandler {
+public class SelectWeightUpdateHandler implements UpdateHandler<SendMessage> {
 
     @Override
     public SendMessage handle(Update message) {
