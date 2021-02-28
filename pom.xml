@@ -11,6 +11,7 @@
         <module>gym-bot-app</module>
         <module>gym-bot-dao</module>
         <module>gym-bot-dao-excel</module>
+        <module>gym-bot-dao-google-disk</module>
     </modules>
     <packaging>pom</packaging>
 

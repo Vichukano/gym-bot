@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>ru.vichukano</groupId>
-            <artifactId>gym-bot-dao-excel</artifactId>
+            <artifactId>gym-bot-dao-google-disk</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
