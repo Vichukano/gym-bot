@@ -1,5 +1,6 @@
 package ru.vichukano.gym.bot;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import ru.vichukano.gym.bot.model.Exercise;
 import ru.vichukano.gym.bot.model.SavedUser;
@@ -37,9 +38,11 @@ public class UserExcelDaoTest {
         return new SavedUser("1232", "test", List.of(training));
     }
 
+    @Ignore
     @Test
     public void shouldSaveWithoutExceptions() {
         var testTarget = new UserExcelDao(TEMP);
+        System.out.println("Temp dir: " + TEMP);
         try {
             testTarget.saveOrUpdate(model());
         } catch (Exception e) {
@@ -48,6 +51,7 @@ public class UserExcelDaoTest {
         }
     }
 
+    @Ignore
     @Test
     public void shouldGetNotEmpty() {
         var testTarget = new UserExcelDao(TEMP);

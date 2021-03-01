@@ -82,14 +82,11 @@ public class UserGoogleDiskDao implements UserDao {
             }
         }
         String fileName = path + user.getId() + user.getName() + FILE_TYPE;
-        try (var out = new FileOutputStream(fileName + NEW)) {
+        try (var out = new FileOutputStream(fileName)) {
             workbook.write(out);
         } catch (IOException e) {
             log.error("Exception while saving for: {}", user, e);
         }
-        java.nio.file.Files.deleteIfExists(Paths.get(fileName));
-        Files.move(Paths.get(fileName + NEW), Paths.get(fileName));
-        log.trace("Finish saving for: {}", user);
         com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
         fileMetadata.setName(user.getId() + user.getName() + FILE_TYPE);
         fileMetadata.setMimeType("application/vnd.google-apps.spreadsheet");
@@ -97,12 +94,15 @@ public class UserGoogleDiskDao implements UserDao {
         com.google.api.services.drive.model.File toDrive = driveService.files().create(fileMetadata, mediaContent)
                 .setFields("id")
                 .execute();
+        log.trace("Finish saving for: {}", user);
+        Files.deleteIfExists(Paths.get(fileName));
         log.debug("Successfully execute file to Google Drive: {}", toDrive);
     }
 
     @SneakyThrows
     @Override
     public Optional<File> getByFileName(String fileName) {
+        log.info("Not implemented yet {}", fileName);
         return Optional.empty();
     }
 

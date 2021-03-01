@@ -25,27 +25,28 @@ import ru.vichukano.gym.bot.service.UserService;
 import ru.vichukano.gym.bot.telegram.GymBot;
 import ru.vichukano.gym.bot.util.PropertiesReader;
 
-import java.io.FileNotFoundException;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 @Slf4j
 public class Main {
     private static final String APPLICATION_NAME = "Gym Bot";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-    private static final String TOKENS_DIRECTORY_PATH = "tokens";
-    private static final Set<String> SCOPES = DriveScopes.all();
-    private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
+    private static final String TOKENS_DIRECTORY_PATH = "/tokens";
+    private static final Collection<String> SCOPES = List.of(DriveScopes.DRIVE);
 
     public static void main(String[] args) throws TelegramApiException, GeneralSecurityException, IOException {
         log.debug("Starting bot!");
         Properties props = PropertiesReader.load("app.properties");
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        Drive driveService = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+        Drive driveService = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT, System.getenv(props.getProperty("credentials"))))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
         var service = new UserService(
@@ -63,17 +64,14 @@ public class Main {
                 .registerBot(
                         new GymBot(
                                 handlerFactory,
-                                props.getProperty("name"),
-                                props.getProperty("token")
+                                System.getenv(props.getProperty("name")),
+                                System.getenv(props.getProperty("token"))
                         )
                 );
     }
 
-    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
-        InputStream in = Main.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-        if (in == null) {
-            throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
-        }
+    private static Credential getCredentials(NetHttpTransport HTTP_TRANSPORT, String cred) throws IOException {
+        InputStream in = new ByteArrayInputStream(cred.getBytes(StandardCharsets.UTF_8));
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
@@ -81,7 +79,6 @@ public class Main {
                 .setAccessType("offline")
                 .build();
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-        return new AuthorizationCodeInstalledApp(flow, receiver).authorize("Vichukano");
+        return new AuthorizationCodeInstalledApp(flow, receiver).authorize("gymbotservice");
     }
-
 }

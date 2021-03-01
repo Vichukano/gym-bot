@@ -39,7 +39,6 @@ public class UserExcelDao implements UserDao {
         } else {
             workbook = new XSSFWorkbook();
         }
-        String sheetName = lastTrainDate(user.getTrainings());
         Sheet sheet = workbook.createSheet("Training " + (workbook.getNumberOfSheets() + 1) + " " + lastTrainDate(user.getTrainings()));
         sheet.setColumnWidth(0, 6000);
         sheet.setColumnWidth(1, 6000);
