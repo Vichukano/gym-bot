@@ -20,7 +20,7 @@ public class StartUpdateHandler implements UpdateHandler<SendMessage> {
         var out = new SendMessage();
         out.setChatId(chatId(message));
         if (START.getCommand().equals(text(message))) {
-            out.setText("Hi! Choose exercise from: " + Exercise.printAll());
+            out.setText("Hi! Choose exercise from:\n" + Exercise.printAll());
             USER_STORE.USERS.asMap().get(userId(message)).setState(State.SELECT_EXERCISE);
         } else {
             out.setText("Send me "
