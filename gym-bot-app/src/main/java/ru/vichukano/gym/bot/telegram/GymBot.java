@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.vichukano.gym.bot.handler.UpdateHandler;
 
+import java.nio.file.Files;
 import java.util.Objects;
 
 @Slf4j
@@ -30,6 +31,7 @@ public class GymBot extends TelegramLongPollingBot {
                 execute((SendMessage) out);
             } else if (Objects.nonNull(out) && out instanceof SendDocument) {
                 execute((SendDocument) out);
+                Files.deleteIfExists(((SendDocument) out).getDocument().getNewMediaFile().toPath());
             }
         } catch (Exception e) {
             log.error("Exception while handle update: {}", update, e);

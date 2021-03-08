@@ -2,6 +2,7 @@ package ru.vichukano.gym.bot.dao.google.disk;
 
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.FileList;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -102,8 +103,22 @@ public class UserGoogleDiskDao implements UserDao {
     @SneakyThrows
     @Override
     public Optional<File> getByFileName(String fileName) {
-        log.info("Not implemented yet {}", fileName);
-        return Optional.empty();
+        log.info("Start to search by: {}", fileName + FILE_TYPE);
+        FileList fileList = driveService.files().list().setQ("name='" + fileName + FILE_TYPE + "'").execute();
+        log.info("Found files: {}", fileList);
+        if (fileList.getFiles().isEmpty()) {
+            log.warn("Can't find file by name: {}", fileName);
+            return Optional.empty();
+        }
+        com.google.api.services.drive.model.File file = fileList.getFiles().get(0);
+        try (var out = new FileOutputStream(path + fileName + FILE_TYPE)) {
+            driveService.files().export(file.getId(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet").executeMediaAndDownloadTo(out);
+        } catch (IOException e) {
+            log.error("Exception while download and saving file with name: {}", fileName, e);
+            return Optional.empty();
+        }
+        log.info("Successfully download file with name: {}", file + fileName + FILE_TYPE);
+        return Optional.of(new File(path + fileName + FILE_TYPE));
     }
 
     private String lastTrainDate(Collection<Training> trainings) {

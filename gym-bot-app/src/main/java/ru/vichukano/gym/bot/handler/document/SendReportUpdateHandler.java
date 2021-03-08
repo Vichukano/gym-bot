@@ -1,6 +1,7 @@
 package ru.vichukano.gym.bot.handler.document;
 
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
@@ -12,6 +13,7 @@ import ru.vichukano.gym.bot.handler.UpdateHandler;
 import ru.vichukano.gym.bot.service.UserService;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Objects;

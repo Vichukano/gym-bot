@@ -39,14 +39,13 @@ import java.util.Properties;
 public class Main {
     private static final String APPLICATION_NAME = "Gym Bot";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-    private static final String TOKENS_DIRECTORY_PATH = "/tokens";
     private static final Collection<String> SCOPES = List.of(DriveScopes.DRIVE);
 
     public static void main(String[] args) throws TelegramApiException, GeneralSecurityException, IOException {
         log.debug("Starting bot!");
         Properties props = PropertiesReader.load("app.properties");
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        Drive driveService = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT, System.getenv(props.getProperty("credentials"))))
+        Drive driveService = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT, props.getProperty("credentials"), props.getProperty("tokens")))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
         var service = new UserService(
@@ -64,18 +63,18 @@ public class Main {
                 .registerBot(
                         new GymBot(
                                 handlerFactory,
-                                System.getenv(props.getProperty("name")),
-                                System.getenv(props.getProperty("token"))
+                                props.getProperty("name"),
+                                props.getProperty("token")
                         )
                 );
     }
 
-    private static Credential getCredentials(NetHttpTransport HTTP_TRANSPORT, String cred) throws IOException {
-        InputStream in = new ByteArrayInputStream(cred.getBytes(StandardCharsets.UTF_8));
+    private static Credential getCredentials(NetHttpTransport HTTP_TRANSPORT, String cred, String tokens) throws IOException {
+        InputStream in = Main.class.getResourceAsStream(cred);
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(tokens)))
                 .setAccessType("offline")
                 .build();
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
