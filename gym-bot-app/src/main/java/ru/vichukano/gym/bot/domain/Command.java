@@ -5,7 +5,10 @@ import lombok.Getter;
 
 @AllArgsConstructor
 public enum Command {
+    HELP("/help"),
     START("/start"),
+    CANCEL("/cancel"),
+    EXERCISE("/exercise"),
     STOP("/stop"),
     REPORT("/report");
 
