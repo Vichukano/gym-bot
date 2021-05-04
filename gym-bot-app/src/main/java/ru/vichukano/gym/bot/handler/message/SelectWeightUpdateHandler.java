@@ -35,6 +35,7 @@ public class SelectWeightUpdateHandler extends AbstractUpdateHandler {
         }
         try {
             var weight = new BigDecimal(text);
+            if (weight.compareTo(BigDecimal.ZERO) < 0) throw new IllegalArgumentException("Must be positive digit");
             log.debug("Select weight in KG: {}", weight);
             out.setText("You select " + text + "KG. Select reps for this weight or " + CANCEL.getCommand() + " for undo");
             User user = USER_STORE.USERS.asMap().get(userId(message));

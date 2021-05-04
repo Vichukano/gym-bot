@@ -1,25 +1,32 @@
 package ru.vichukano.gym.bot.util;
 
 import lombok.experimental.UtilityClass;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
+
+import java.util.Optional;
 
 @UtilityClass
 public class MessageUtils {
 
     public static String chatId(Update u) {
-        return String.valueOf(u.getMessage().getChatId());
+        return Optional.ofNullable(u.getMessage()).map(Message::getChatId).map(String::valueOf)
+                .orElseGet(() -> String.valueOf(u.getCallbackQuery().getMessage().getChatId()));
     }
 
     public static String text(Update u) {
-        return u.getMessage().getText();
+        return Optional.ofNullable(u.getMessage()).map(Message::getText).orElse(null);
     }
 
     public static String userName(Update u) {
-        return u.getMessage().getFrom().getUserName();
+        return Optional.ofNullable(u.getMessage()).map(Message::getFrom).map(user -> user.getUserName() != null ? user.getUserName() : user.getFirstName())
+                .orElseGet(() -> u.getCallbackQuery().getFrom().getUserName());
     }
 
     public static String userId(Update u) {
-        return String.valueOf(u.getMessage().getFrom().getId());
+        return Optional.ofNullable(u.getMessage()).map(Message::getFrom).map(User::getId).map(String::valueOf)
+                .orElseGet(() -> String.valueOf(u.getCallbackQuery().getFrom().getId()));
     }
 
 }

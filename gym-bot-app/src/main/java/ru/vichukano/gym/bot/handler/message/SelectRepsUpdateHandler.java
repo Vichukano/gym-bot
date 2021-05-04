@@ -32,6 +32,7 @@ public class SelectRepsUpdateHandler extends AbstractUpdateHandler {
         }
         try {
             var reps = Integer.valueOf(text);
+            if (reps <= 0) throw new IllegalArgumentException("Must be positive digit");
             log.debug("Select reps: {}", reps);
             out.setText("You select "
                     + text

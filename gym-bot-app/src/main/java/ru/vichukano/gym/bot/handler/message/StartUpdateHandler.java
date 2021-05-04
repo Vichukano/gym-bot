@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.vichukano.gym.bot.domain.Exercise;
 import ru.vichukano.gym.bot.domain.State;
+import ru.vichukano.gym.bot.factory.KeyboardFactory;
 
 import static ru.vichukano.gym.bot.domain.Command.HELP;
 import static ru.vichukano.gym.bot.domain.Command.START;
@@ -20,7 +20,8 @@ public class StartUpdateHandler extends AbstractUpdateHandler {
     public SendMessage handle(Update message) {
         var out = super.handle(message);
         if (START.getCommand().equals(text(message))) {
-            out.setText("Choose exercise from:\n" + Exercise.printAll());
+            out.setText("Choose exercise from:\n");
+            out.setReplyMarkup(KeyboardFactory.exercisesKeyboard());
             USER_STORE.USERS.asMap().get(userId(message)).setState(State.SELECT_EXERCISE);
         } else if (HELP.getCommand().equals(text(message))) {
             out.setText("Hi! I am a gym training bot, I can help to track your progress in the gym."

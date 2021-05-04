@@ -7,9 +7,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.vichukano.gym.bot.domain.State;
 import ru.vichukano.gym.bot.domain.dto.Exercise;
 import ru.vichukano.gym.bot.domain.dto.User;
+import ru.vichukano.gym.bot.factory.KeyboardFactory;
+
+import java.util.Objects;
 
 import static ru.vichukano.gym.bot.domain.Command.CANCEL;
-import static ru.vichukano.gym.bot.domain.Command.STOP;
 import static ru.vichukano.gym.bot.domain.Exercise.*;
 import static ru.vichukano.gym.bot.store.UserStore.USER_STORE;
 import static ru.vichukano.gym.bot.util.MessageUtils.text;
@@ -22,6 +24,10 @@ public class SelectExerciseHandler extends AbstractUpdateHandler {
     public SendMessage handle(Update message) {
         var out = super.handle(message);
         String text = text(message);
+        if (Objects.isNull(text)) {
+            text = message.getCallbackQuery().getData();
+            log().info("Message has callback data: {}", text);
+        }
         if (BENCH_PRESS.getCommand().equals(text)) {
             out.setText("Start to bench. Input weight in KG or " + CANCEL.getCommand() + " for undo");
             User user = USER_STORE.USERS.asMap().get(userId(message));
@@ -63,11 +69,8 @@ public class SelectExerciseHandler extends AbstractUpdateHandler {
             user.getTraining().getExercises().add(new Exercise(PULL_UP.name()));
             user.setState(State.SELECT_WEIGHT);
         } else {
-            out.setText("Input correct exercise form:"
-                    + printAll()
-                    + " or type "
-                    + STOP.getCommand()
-                    + " for exit");
+            out.setText("Input correct exercise form:\n");
+            out.setReplyMarkup(KeyboardFactory.exercisesKeyboard());
         }
         return out;
     }

@@ -11,7 +11,7 @@ public abstract class AbstractUpdateHandler implements UpdateHandler<SendMessage
 
     @Override
     public SendMessage handle(Update message) {
-        log().trace("Handler message: {}", message);
+        log().debug("Handler message: {}", message);
         var out = new SendMessage();
         out.setChatId(chatId(message));
         return out;

@@ -18,8 +18,8 @@
         </encoder>
     </appender>
 
-    <logger name="ru.vichukano.gym.bot" level="DEBUG">
-        <appender-ref ref="FILE"/>
+    <logger name="root" level="DEBUG">
+        <appender-ref ref="STDOUT"/>
     </logger>
 
 </configuration>

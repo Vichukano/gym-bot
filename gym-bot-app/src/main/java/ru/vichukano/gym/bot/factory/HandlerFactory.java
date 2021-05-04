@@ -18,7 +18,7 @@ public class HandlerFactory implements UpdateHandler<Object> {
 
     @Override
     public Object handle(Update message) {
-        if (!checkMessage(message)) {
+        if (!validMessage(message) && !validCallback(message)) {
             //TODO: Может лучше кидать исключения???
             log.warn("Receive null");
             return null;
@@ -31,7 +31,11 @@ public class HandlerFactory implements UpdateHandler<Object> {
         return compoundMsgHandler.handle(message);
     }
 
-    private boolean checkMessage(Update message) {
+    private boolean validMessage(Update message) {
         return message.hasMessage() && message.getMessage().hasText();
+    }
+
+    private boolean validCallback(Update message) {
+        return message.hasCallbackQuery();
     }
 }

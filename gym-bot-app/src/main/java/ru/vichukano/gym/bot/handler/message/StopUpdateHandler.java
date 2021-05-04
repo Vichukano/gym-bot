@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.vichukano.gym.bot.domain.Command;
-import ru.vichukano.gym.bot.domain.State;
 import ru.vichukano.gym.bot.domain.dto.Training;
 import ru.vichukano.gym.bot.domain.dto.User;
 import ru.vichukano.gym.bot.service.UserService;
@@ -44,7 +43,8 @@ public class StopUpdateHandler extends AbstractUpdateHandler {
                     + " for send training report."
             );
             service.saveUserTrainingInfo(user);
-            user.setState(State.START_TRAINING);
+            USER_STORE.USERS.asMap().remove(user.getId());
+            log().debug("Remove user form cache: {}", user);
         } else {
             out.setText("Something goes wrong...");
         }
