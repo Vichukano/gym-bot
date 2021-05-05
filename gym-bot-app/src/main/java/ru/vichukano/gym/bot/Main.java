@@ -19,30 +19,16 @@ public class Main {
 
     public static void main(String[] args) throws TelegramApiException {
         log.debug("Starting bot!");
-        //if (args.length < 1) {
-        //    throw new IllegalArgumentException("Path to configuration not specified. Set path with argument");
-        //}
-        //String pathToConfig = args[0];
-        Properties props = PropertiesReader.load("app.properties");
-        //Properties props = PropertiesReader.load(pathToConfig);
-        var service = new UserService(
-                new UserExcelDao(
-                        props.getProperty("store").isEmpty() ? System.getProperty("java.io.tmpdir") : props.getProperty("store")
-                )
-        );
+        if (args.length < 1) {
+            throw new IllegalArgumentException("Path to configuration not specified. Set path with argument");
+        }
+        String pathToConfig = args[0];
+        log.debug("Path to config: {}", pathToConfig);
+        Properties props = PropertiesReader.loadFromArgs(pathToConfig);
+        var service = new UserService(new UserExcelDao(props.getProperty("store").isEmpty() ? System.getProperty("java.io.tmpdir") : props.getProperty("store")));
         var stateToHandlerFactory = new StateToHandlerFactory(service);
-        var handlerFactory = new HandlerFactory(
-                new CompoundUpdateHandler(stateToHandlerFactory.stateToHandler()),
-                new SendReportUpdateHandler(service)
-        );
-        new TelegramBotsApi(DefaultBotSession.class)
-                .registerBot(
-                        new GymBot(
-                                handlerFactory,
-                                props.getProperty("name"),
-                                props.getProperty("token")
-                        )
-                );
+        var handlerFactory = new HandlerFactory(new CompoundUpdateHandler(stateToHandlerFactory.stateToHandler()), new SendReportUpdateHandler(service));
+        new TelegramBotsApi(DefaultBotSession.class).registerBot(new GymBot(handlerFactory, props.getProperty("name"), props.getProperty("token")));
     }
 
 }

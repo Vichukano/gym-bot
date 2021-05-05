@@ -34,7 +34,7 @@ public class UserService {
     public File getTrainingInfo(User user) {
         log.debug("Get training info for: {}", user);
         String fileName = user.getId() + user.getName();
-        Optional<File> fromDao = userDao.getByFileName(user.getId() + user.getName());
+        Optional<File> fromDao = userDao.getByFileName(fileName);
         if (fromDao.isEmpty()) {
             throw new IllegalStateException("File with name " + fileName + " is absent!");
         }

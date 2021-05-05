@@ -4,7 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.vichukano.gym.bot.domain.Exercise;
 import ru.vichukano.gym.bot.domain.dto.User;
+import ru.vichukano.gym.bot.factory.KeyboardFactory;
+
+import java.util.Objects;
 
 import static ru.vichukano.gym.bot.domain.Command.*;
 import static ru.vichukano.gym.bot.domain.State.SELECT_EXERCISE;
@@ -48,6 +52,12 @@ public class SelectRepsUpdateHandler extends AbstractUpdateHandler {
                     .getReps()
                     .add(reps);
             user.setState(SELECT_WEIGHT);
+            var keyboard = KeyboardFactory.afterSetKeyboard();
+            String exercise = user.getTraining().getExercises().getLast().getName();
+            if (Objects.equals(exercise, Exercise.ABS.name()) || Objects.equals(exercise, Exercise.PULL_UP.name())) {
+                keyboard.getKeyboard().add(KeyboardFactory.zeroWeightButton().getKeyboard().get(0));
+            }
+            out.setReplyMarkup(keyboard);
         } catch (Exception e) {
             out.setText("Invalid reps " + text + "! Reps must be digit");
         }

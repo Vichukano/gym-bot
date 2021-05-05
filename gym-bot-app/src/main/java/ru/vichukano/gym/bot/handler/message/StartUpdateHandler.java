@@ -35,6 +35,7 @@ public class StartUpdateHandler extends AbstractUpdateHandler {
                     + " or "
                     + HELP.getCommand()
                     + " for help.");
+            out.setReplyMarkup(KeyboardFactory.startKeyboard());
         }
         return out;
     }
