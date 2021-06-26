@@ -10,6 +10,10 @@
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>gym-bot-app</artifactId>
+    <properties>
+        <scala.binary.version>2.13</scala.binary.version>
+    </properties>
+
 
     <dependencies>
         <dependency>
@@ -33,6 +37,10 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor-typed_${scala.binary.version}</artifactId>
         </dependency>
     </dependencies>
 </project>
