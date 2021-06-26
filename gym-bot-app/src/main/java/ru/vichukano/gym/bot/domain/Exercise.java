@@ -15,7 +15,9 @@ public enum Exercise {
     DUMBBELLS_OVERHEAD_PRESS("/dum_over_press", "dumbbells overhead press"),
     DUMBBELLS_BENCH_PRESS("/dum_bench_press", "dumbbells bench press"),
     ABS("/abs", "exercises for abs"),
-    PULL_UP("/pull_up", "pull ups");
+    PULL_UP("/pull_up", "pull ups"),
+    PUSH_UP("/push_up", "push ups"),
+    PUSH_UP_ON_BARS("/push_up_on_bars", "push ups on the uneven bars");
 
     @Getter
     private final String command;
