@@ -2,6 +2,7 @@ package ru.vichukano.gym.bot.actors;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
+import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
@@ -27,7 +28,8 @@ public class BotActor extends AbstractBehavior<BotCommand> {
     }
 
     public static Behavior<BotCommand> create(TelegramLongPollingBot bot, UserService service) {
-        return Behaviors.setup(ctx -> new BotActor(ctx, bot, service));
+        return Behaviors.<BotCommand>supervise(Behaviors.setup(ctx -> new BotActor(ctx, bot, service)))
+                .onFailure(SupervisorStrategy.restart().withStopChildren(false));
     }
 
     @Override

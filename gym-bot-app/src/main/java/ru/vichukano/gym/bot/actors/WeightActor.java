@@ -2,6 +2,7 @@ package ru.vichukano.gym.bot.actors;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
+import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
@@ -24,7 +25,8 @@ public class WeightActor extends AbstractBehavior<WeightActor.WeightCommand> {
     }
 
     public static Behavior<WeightCommand> create() {
-        return Behaviors.setup(WeightActor::new);
+        return Behaviors.supervise(Behaviors.setup(WeightActor::new))
+                .onFailure(SupervisorStrategy.restart());
     }
 
     @Override

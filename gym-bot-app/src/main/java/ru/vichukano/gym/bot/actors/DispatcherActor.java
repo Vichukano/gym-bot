@@ -2,6 +2,7 @@ package ru.vichukano.gym.bot.actors;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
+import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
@@ -53,7 +54,8 @@ public class DispatcherActor extends AbstractBehavior<DispatcherActor.Dispatcher
     }
 
     public static Behavior<DispatcherCommand> create(ActorRef<BotActor.BotCommand> mainActor, UserService userService) {
-        return Behaviors.setup(ctx -> new DispatcherActor(ctx, mainActor, userService));
+        return Behaviors.<DispatcherCommand>supervise(Behaviors.setup(ctx -> new DispatcherActor(ctx, mainActor, userService)))
+                .onFailure(SupervisorStrategy.restart().withStopChildren(false));
     }
 
     @Override

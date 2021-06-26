@@ -2,6 +2,7 @@ package ru.vichukano.gym.bot.actors;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
+import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
@@ -26,7 +27,8 @@ public class ExerciseActor extends AbstractBehavior<ExerciseCommand> {
     }
 
     public static Behavior<ExerciseCommand> create() {
-        return Behaviors.setup(ExerciseActor::new);
+        return Behaviors.supervise(Behaviors.setup(ExerciseActor::new))
+                .onFailure(SupervisorStrategy.restart());
     }
 
     @Override
@@ -85,6 +87,18 @@ public class ExerciseActor extends AbstractBehavior<ExerciseCommand> {
             out.setReplyMarkup(KeyboardFactory.zeroWeightButton());
             User user = exercise.user;
             user.getTraining().getExercises().add(new Exercise(PULL_UP.name()));
+            user.setState(State.SELECT_WEIGHT);
+        } else if (PUSH_UP.getCommand().equals(text)) {
+            out.setText("Start to push ups. Input weight in KG. If you do it with body weight, than input 0 or " + CANCEL.getCommand() + " for undo");
+            out.setReplyMarkup(KeyboardFactory.zeroWeightButton());
+            User user = exercise.user;
+            user.getTraining().getExercises().add(new Exercise(PUSH_UP.name()));
+            user.setState(State.SELECT_WEIGHT);
+        } else if (PUSH_UP_ON_BARS.getCommand().equals(text)) {
+            out.setText("Start to push ups on bars. Input weight in KG. If you do it with body weight, than input 0 or " + CANCEL.getCommand() + " for undo");
+            out.setReplyMarkup(KeyboardFactory.zeroWeightButton());
+            User user = exercise.user;
+            user.getTraining().getExercises().add(new Exercise(PUSH_UP_ON_BARS.name()));
             user.setState(State.SELECT_WEIGHT);
         } else {
             out.setText("Input correct exercise form:\n");

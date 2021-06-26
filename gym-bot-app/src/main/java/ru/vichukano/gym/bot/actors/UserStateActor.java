@@ -3,6 +3,7 @@ package ru.vichukano.gym.bot.actors;
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.PostStop;
+import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
@@ -40,7 +41,8 @@ public class UserStateActor extends AbstractBehavior<UserStateActor.StateCommand
                                                 String id,
                                                 String name,
                                                 State state) {
-        return Behaviors.setup(ctx -> new UserStateActor(ctx, dispatcher, id, name, state));
+        return Behaviors.<StateCommand>supervise(Behaviors.setup(ctx -> new UserStateActor(ctx, dispatcher, id, name, state)))
+                .onFailure(SupervisorStrategy.restart());
     }
 
     @Override

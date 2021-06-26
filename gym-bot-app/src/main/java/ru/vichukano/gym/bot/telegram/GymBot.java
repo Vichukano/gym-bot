@@ -27,10 +27,19 @@ public class GymBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         log.debug("Received new update: {}", update);
         try {
-            botActor.tell(new BotActor.UserCommand(update));
+            if (isValid(update)) {
+                botActor.tell(new BotActor.UserCommand(update));
+            } else {
+                log.debug("Skip invalid update: {}", update);
+            }
         } catch (Exception e) {
             log.error("Exception while handle update: {}", update, e);
         }
+    }
+
+    private boolean isValid(Update update) {
+        return (update.hasMessage() && update.getMessage().hasText() && update.getMessage().getText() != null)
+                || (update.hasCallbackQuery() && update.getCallbackQuery().getData() != null);
     }
 
     @Override

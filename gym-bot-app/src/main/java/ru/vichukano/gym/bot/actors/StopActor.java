@@ -2,6 +2,7 @@ package ru.vichukano.gym.bot.actors;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
+import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
@@ -29,7 +30,8 @@ public class StopActor extends AbstractBehavior<StopActor.StopCommand> {
     }
 
     public static Behavior<StopCommand> create(UserService service) {
-        return Behaviors.setup(ctx -> new StopActor(ctx, service));
+        return Behaviors.<StopCommand>supervise(Behaviors.setup(ctx -> new StopActor(ctx, service)))
+                .onFailure(SupervisorStrategy.restart());
     }
 
     @Override

@@ -2,6 +2,7 @@ package ru.vichukano.gym.bot.actors;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
+import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
@@ -22,7 +23,8 @@ public class CancelActor extends AbstractBehavior<CancelActor.CancelCommand> {
     }
 
     public static Behavior<CancelCommand> create() {
-        return Behaviors.setup(CancelActor::new);
+        return Behaviors.supervise(Behaviors.setup(CancelActor::new))
+                .onFailure(SupervisorStrategy.restart());
     }
 
     @Override

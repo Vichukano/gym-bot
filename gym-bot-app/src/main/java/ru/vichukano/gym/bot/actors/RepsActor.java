@@ -2,6 +2,7 @@ package ru.vichukano.gym.bot.actors;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
+import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
@@ -27,7 +28,8 @@ public class RepsActor extends AbstractBehavior<RepsActor.RepsCommand> {
     }
 
     public static Behavior<RepsCommand> create() {
-        return Behaviors.setup(RepsActor::new);
+        return Behaviors.supervise(Behaviors.setup(RepsActor::new))
+                .onFailure(SupervisorStrategy.restart());
     }
 
     @Override
@@ -64,7 +66,10 @@ public class RepsActor extends AbstractBehavior<RepsActor.RepsCommand> {
             user.setState(SELECT_WEIGHT);
             var keyboard = KeyboardFactory.afterSetKeyboard();
             String exercise = user.getTraining().getExercises().getLast().getName();
-            if (Objects.equals(exercise, Exercise.ABS.name()) || Objects.equals(exercise, Exercise.PULL_UP.name())) {
+            if (Objects.equals(exercise, Exercise.ABS.name())
+                    || Objects.equals(exercise, Exercise.PULL_UP.name())
+                    || Objects.equals(exercise, Exercise.PUSH_UP.name())
+                    || Objects.equals(exercise, Exercise.PUSH_UP_ON_BARS.name())) {
                 keyboard.getKeyboard().add(KeyboardFactory.zeroWeightButton().getKeyboard().get(0));
             }
             out.setReplyMarkup(keyboard);
