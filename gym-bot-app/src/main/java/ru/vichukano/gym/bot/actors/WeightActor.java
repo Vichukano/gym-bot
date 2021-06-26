@@ -16,8 +16,6 @@ import java.math.BigDecimal;
 
 import static ru.vichukano.gym.bot.domain.Command.CANCEL;
 import static ru.vichukano.gym.bot.domain.State.SELECT_REPS;
-import static ru.vichukano.gym.bot.store.UserStore.USER_STORE;
-import static ru.vichukano.gym.bot.util.MessageUtils.userId;
 
 public class WeightActor extends AbstractBehavior<WeightActor.WeightCommand> {
 
@@ -48,7 +46,7 @@ public class WeightActor extends AbstractBehavior<WeightActor.WeightCommand> {
                 throw new IllegalArgumentException("Must be positive digit");
             }
             out.setText("You select " + text + "KG. Select reps for this weight or " + CANCEL.getCommand() + " for undo");
-            User user = USER_STORE.USERS.asMap().get(userId(update));
+            User user = weightCommand.user;
             user.getTraining()
                     .getExercises()
                     .getLast()
@@ -70,6 +68,7 @@ public class WeightActor extends AbstractBehavior<WeightActor.WeightCommand> {
     @Value
     public static class SelectWeight implements WeightCommand {
         Update update;
+        User user;
         ActorRef<BotActor.BotCommand> replyTo;
     }
 }

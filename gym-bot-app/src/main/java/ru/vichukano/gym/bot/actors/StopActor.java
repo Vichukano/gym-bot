@@ -20,9 +20,6 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static ru.vichukano.gym.bot.store.UserStore.USER_STORE;
-import static ru.vichukano.gym.bot.util.MessageUtils.userId;
-
 public class StopActor extends AbstractBehavior<StopActor.StopCommand> {
     private final UserService service;
 
@@ -47,7 +44,7 @@ public class StopActor extends AbstractBehavior<StopActor.StopCommand> {
         Update update = stop.update;
         var out = new SendMessage();
         out.setChatId(MessageUtils.chatId(update));
-        User user = USER_STORE.USERS.asMap().get(userId(update));
+        User user = stop.user;
         Training training = user.getTraining();
         out.setText("Stop training. Your results:\n"
                 + "Training session time: "
@@ -60,7 +57,7 @@ public class StopActor extends AbstractBehavior<StopActor.StopCommand> {
                 + " for send training report."
         );
         service.saveUserTrainingInfo(user);
-        USER_STORE.USERS.asMap().remove(user.getId());
+        stop.userState.tell(new UserStateActor.DestroyMessage());
         stop.replyTo.tell(new BotActor.ReplyMessage(out));
         return this;
     }
@@ -69,8 +66,10 @@ public class StopActor extends AbstractBehavior<StopActor.StopCommand> {
     }
 
     @Value
-    public static class StopTraining implements StopCommand{
+    public static class StopTraining implements StopCommand {
         Update update;
+        User user;
+        ActorRef<UserStateActor.StateCommand> userState;
         ActorRef<BotActor.BotCommand> replyTo;
     }
 }

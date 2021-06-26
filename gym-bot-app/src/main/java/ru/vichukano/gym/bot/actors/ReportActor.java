@@ -10,18 +10,13 @@ import lombok.Value;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.vichukano.gym.bot.domain.State;
-import ru.vichukano.gym.bot.domain.dto.Training;
 import ru.vichukano.gym.bot.domain.dto.User;
 import ru.vichukano.gym.bot.service.UserService;
 
 import java.io.File;
-import java.time.LocalDateTime;
-import java.util.LinkedList;
 import java.util.Objects;
 
-import static ru.vichukano.gym.bot.store.UserStore.USER_STORE;
-import static ru.vichukano.gym.bot.util.MessageUtils.*;
+import static ru.vichukano.gym.bot.util.MessageUtils.chatId;
 
 public class ReportActor extends AbstractBehavior<ReportActor.ReportCommand> {
     private final UserService userService;
@@ -48,11 +43,13 @@ public class ReportActor extends AbstractBehavior<ReportActor.ReportCommand> {
         ActorRef<BotActor.BotCommand> replyTo = report.replyTo;
         var out = new SendDocument();
         out.setChatId(chatId(update));
-        User user = USER_STORE.USERS.asMap().getOrDefault(
-                userId(update),
-                new User(userId(update), userName(update), new Training(LocalDateTime.now(), new LinkedList<>()), State.START_TRAINING)
-        );
-        File reportFile = userService.getTrainingInfo(user);
+        User user = report.user;
+        File reportFile = null;
+        try {
+            reportFile = userService.getTrainingInfo(user);
+        } catch (Exception e) {
+            getContext().getLog().error("Exception while getting file report for user: {}", user);
+        }
         if (Objects.nonNull(reportFile)) {
             out.setDocument(new InputFile(reportFile));
         }
@@ -66,6 +63,7 @@ public class ReportActor extends AbstractBehavior<ReportActor.ReportCommand> {
     @Value
     public static class TrainingReport implements ReportCommand {
         Update update;
+        User user;
         ActorRef<BotActor.BotCommand> replyTo;
     }
 }

@@ -23,7 +23,7 @@ public class BotActor extends AbstractBehavior<BotCommand> {
     private BotActor(ActorContext<BotCommand> context, TelegramLongPollingBot bot, UserService userService) {
         super(context);
         this.bot = bot;
-        this.dispatcher = getContext().spawn(DispatcherActor.create(userService), "dispatcher-actor");
+        this.dispatcher = getContext().spawn(DispatcherActor.create(getContext().getSelf(), userService), "dispatcher-actor");
     }
 
     public static Behavior<BotCommand> create(TelegramLongPollingBot bot, UserService service) {
@@ -41,7 +41,7 @@ public class BotActor extends AbstractBehavior<BotCommand> {
 
     private Behavior<BotCommand> onUserCommandReceive(UserCommand received) {
         getContext().getLog().debug("Receive message: {}", received);
-        dispatcher.tell(new DispatcherActor.DispatcherMessage(received.getUpdate(), getContext().getSelf()));
+        dispatcher.tell(new DispatcherActor.DispatcherMessage(received.update));
         return this;
     }
 

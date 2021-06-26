@@ -14,8 +14,6 @@ import ru.vichukano.gym.bot.factory.KeyboardFactory;
 import ru.vichukano.gym.bot.util.MessageUtils;
 
 import static ru.vichukano.gym.bot.domain.State.SELECT_EXERCISE;
-import static ru.vichukano.gym.bot.store.UserStore.USER_STORE;
-import static ru.vichukano.gym.bot.util.MessageUtils.userId;
 
 public class CancelActor extends AbstractBehavior<CancelActor.CancelCommand> {
 
@@ -39,13 +37,13 @@ public class CancelActor extends AbstractBehavior<CancelActor.CancelCommand> {
         Update update = cancelCommand.update;
         var out = new SendMessage();
         out.setChatId(MessageUtils.chatId(update));
-        User user = USER_STORE.USERS.asMap().get(userId(update));
+        User user = cancelCommand.user;
         user.getTraining()
                 .getExercises()
                 .getLast()
                 .getWeights()
                 .removeLast();
-        USER_STORE.USERS.asMap().get(userId(update)).setState(SELECT_EXERCISE);
+        user.setState(SELECT_EXERCISE);
         out.setText("Successfully undo exercise, input new exercise form:\n");
         out.setReplyMarkup(KeyboardFactory.exercisesKeyboard());
         cancelCommand.replyTo.tell(new BotActor.ReplyMessage(out));
@@ -58,6 +56,7 @@ public class CancelActor extends AbstractBehavior<CancelActor.CancelCommand> {
     @Value
     public static class CancelExercise implements CancelCommand {
         Update update;
+        User user;
         ActorRef<BotActor.BotCommand> replyTo;
     }
 }

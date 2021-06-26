@@ -19,8 +19,6 @@ import java.util.Objects;
 import static ru.vichukano.gym.bot.domain.Command.EXERCISE;
 import static ru.vichukano.gym.bot.domain.Command.STOP;
 import static ru.vichukano.gym.bot.domain.State.SELECT_WEIGHT;
-import static ru.vichukano.gym.bot.store.UserStore.USER_STORE;
-import static ru.vichukano.gym.bot.util.MessageUtils.userId;
 
 public class RepsActor extends AbstractBehavior<RepsActor.RepsCommand> {
 
@@ -57,7 +55,7 @@ public class RepsActor extends AbstractBehavior<RepsActor.RepsCommand> {
                     + " for finish training or "
                     + EXERCISE.getCommand()
                     + " for choose another exercise.");
-            User user = USER_STORE.USERS.asMap().get(userId(update));
+            User user = repsCommand.user;
             user.getTraining()
                     .getExercises()
                     .getLast()
@@ -84,6 +82,7 @@ public class RepsActor extends AbstractBehavior<RepsActor.RepsCommand> {
     @Value
     public static class SelectReps implements RepsCommand {
         Update update;
+        User user;
         ActorRef<BotActor.BotCommand> replyTo;
     }
 }

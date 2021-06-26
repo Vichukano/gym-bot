@@ -11,12 +11,13 @@ import lombok.val;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.vichukano.gym.bot.domain.State;
+import ru.vichukano.gym.bot.domain.dto.User;
 import ru.vichukano.gym.bot.factory.KeyboardFactory;
 
 import static ru.vichukano.gym.bot.domain.Command.HELP;
 import static ru.vichukano.gym.bot.domain.Command.START;
-import static ru.vichukano.gym.bot.store.UserStore.USER_STORE;
-import static ru.vichukano.gym.bot.util.MessageUtils.*;
+import static ru.vichukano.gym.bot.util.MessageUtils.chatId;
+import static ru.vichukano.gym.bot.util.MessageUtils.text;
 
 public class StartActor extends AbstractBehavior<StartActor.StartCommand> {
 
@@ -43,7 +44,7 @@ public class StartActor extends AbstractBehavior<StartActor.StartCommand> {
         if (START.getCommand().equals(text(update))) {
             out.setText("Choose exercise from:\n");
             out.setReplyMarkup(KeyboardFactory.exercisesKeyboard());
-            USER_STORE.USERS.asMap().get(userId(update)).setState(State.SELECT_EXERCISE);
+            start.user.setState(State.SELECT_EXERCISE);
         } else {
             out.setText("Send me "
                     + START.getCommand()
@@ -63,6 +64,7 @@ public class StartActor extends AbstractBehavior<StartActor.StartCommand> {
     @Value
     public static class StartTraining implements StartCommand {
         Update update;
+        User user;
         ActorRef<BotActor.BotCommand> replyTo;
     }
 }
