@@ -1,14 +1,16 @@
 package ru.vichukano.gym.bot.util;
 
-import lombok.experimental.UtilityClass;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.Optional;
 
-@UtilityClass
 public class MessageUtils {
+
+    private MessageUtils() {
+    }
 
     public static String chatId(Update u) {
         return Optional.ofNullable(u.getMessage()).map(Message::getChatId).map(String::valueOf)
@@ -17,6 +19,10 @@ public class MessageUtils {
 
     public static String text(Update u) {
         return Optional.ofNullable(u.getMessage()).map(Message::getText).orElse(null);
+    }
+
+    public static String queryData(Update u) {
+        return Optional.ofNullable(u.getCallbackQuery()).map(CallbackQuery::getData).orElse(null);
     }
 
     public static String userName(Update u) {
