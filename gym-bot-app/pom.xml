@@ -38,6 +38,16 @@
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-actor-typed_${scala.binary.version}</artifactId>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor-testkit-typed_${scala.binary.version}</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
 

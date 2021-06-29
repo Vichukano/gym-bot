@@ -42,8 +42,6 @@ public class CancelActor extends AbstractBehavior<CancelActor.CancelCommand> {
         User user = cancelCommand.user;
         user.getTraining()
                 .getExercises()
-                .getLast()
-                .getWeights()
                 .removeLast();
         user.setState(SELECT_EXERCISE);
         out.setText("Successfully undo exercise, input new exercise form:\n");
