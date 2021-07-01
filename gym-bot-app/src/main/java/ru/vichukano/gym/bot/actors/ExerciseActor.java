@@ -72,7 +72,7 @@ public class ExerciseActor extends AbstractBehavior<ExerciseCommand> {
             user.getTraining().getExercises().add(new Exercise(DUMBBELLS_OVERHEAD_PRESS.name()));
             user.setState(State.SELECT_WEIGHT);
         } else if (DUMBBELLS_BENCH_PRESS.getCommand().equals(text)) {
-            out.setText("Start to bench dumbbells press. Input weight in KG or " + CANCEL.getCommand() + " for undo");
+            out.setText("Start to dumbbells bench press. Input weight in KG or " + CANCEL.getCommand() + " for undo");
             User user = exercise.user;
             user.getTraining().getExercises().add(new Exercise(DUMBBELLS_BENCH_PRESS.name()));
             user.setState(State.SELECT_WEIGHT);
