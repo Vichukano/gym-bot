@@ -62,7 +62,7 @@ public class UserStateActor extends AbstractBehavior<UserStateActor.StateCommand
     private Behavior<StateCommand> onGetStateReceive(GetState message) {
         getContext().getLog().debug("Receive GetState message: {}", message);
         lastAccessTime = message.accessTime;
-        message.replyTo.tell(new DispatcherActor.UserStateAnswer(message.update, user));
+        dispatcher.tell(new DispatcherActor.UserStateAnswer(message.update, user));
         return Behaviors.withTimers(timer -> {
             timer.startTimerAtFixedRate(TIMER_KEY, new TryExpired(), Duration.ofMinutes(MAX_IDLE_TIME_MINUTES));
             return this;
@@ -94,6 +94,5 @@ public class UserStateActor extends AbstractBehavior<UserStateActor.StateCommand
     public static class GetState implements StateCommand {
         LocalDateTime accessTime;
         Update update;
-        ActorRef<DispatcherActor.DispatcherCommand> replyTo;
     }
 }
