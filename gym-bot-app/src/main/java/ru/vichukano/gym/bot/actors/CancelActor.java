@@ -40,11 +40,13 @@ public class CancelActor extends AbstractBehavior<CancelActor.CancelCommand> {
         var out = new SendMessage();
         out.setChatId(MessageUtils.chatId(update));
         User user = cancelCommand.user;
-        user.getTraining()
-                .getExercises()
-                .getLast()
-                .getWeights()
-                .removeLast();
+        try {
+            user.getTraining()
+                    .getExercises()
+                    .removeLast();
+        }catch (Exception e) {
+            getContext().getLog().error("Exception while removing lang exercise. Command: {}", cancelCommand, e);
+        }
         user.setState(SELECT_EXERCISE);
         out.setText("Successfully undo exercise, input new exercise form:\n");
         out.setReplyMarkup(KeyboardFactory.exercisesKeyboard());

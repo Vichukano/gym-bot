@@ -78,7 +78,7 @@ public class DispatcherActor extends AbstractBehavior<DispatcherActor.Dispatcher
             userActors.put(userId, userRef);
             getContext().getLog().info("Create new user context: {}", userRef);
         }
-        userRef.tell(new UserStateActor.GetState(LocalDateTime.now(), update, getContext().getSelf()));
+        userRef.tell(new UserStateActor.GetState(LocalDateTime.now(), update));
         return this;
     }
 

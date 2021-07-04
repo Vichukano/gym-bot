@@ -18,7 +18,8 @@
         </encoder>
     </appender>
 
-    <logger name="root" level="DEBUG">
+    <logger name="root" level="INFO">
+        <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
     </logger>
 
