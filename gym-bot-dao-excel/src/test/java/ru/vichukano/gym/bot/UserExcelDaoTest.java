@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class UserExcelDaoTest {
-    private static final String TEMP = System.getProperty("java.io.tmpdir");
+    private static final String TEMP = System.getProperty("java.io.tmpdir") + "/";
 
     static SavedUser model() {
         var bench = new Exercise(
