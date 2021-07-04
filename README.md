@@ -17,4 +17,4 @@ token=MyBotToken
 store=/bot/store/
 ~~~~
 
-![build](https://github.com/Vichukano/gym-bot/workflows/maven.yml/badge.svg)
+![build](https://github.com/Vichukano/gym-bot/actions/workflows/maven.yml/badge.svg)
