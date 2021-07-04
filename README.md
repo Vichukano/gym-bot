@@ -16,3 +16,5 @@ token=MyBotToken
 #path to store where save files with trainings. If not set, then files will store in system temp dir
 store=/bot/store/
 ~~~~
+
+![build](https://github.com/Vichukano/gym-bot/actions/workflows/maven.yml/badge.svg)
