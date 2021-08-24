@@ -13,7 +13,6 @@
         <module>gym-bot-dao-excel</module>
         <module>gym-bot-dao-client</module>
         <module>gym-bot-dao-database</module>
-        <module>gym-bot-liquibase</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -99,6 +98,35 @@
                     <artifactId>maven-shade-plugin</artifactId>
                     <version>3.2.4</version>
                     <executions>
+                        <execution>
+                            <id>shade-my-jar</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                            <configuration>
+                                <shadedArtifactAttached>true</shadedArtifactAttached>
+                                <createDependencyReducedPom>false</createDependencyReducedPom>
+                                <shadedClassifierName>with-dependencies</shadedClassifierName>
+                                <artifactSet>
+                                    <includes>
+                                        <include>*:*</include>
+                                    </includes>
+                                </artifactSet>
+                                <transformers>
+                                    <transformer
+                                            implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                        <resource>reference.conf</resource>
+                                    </transformer>
+                                    <transformer
+                                            implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                        <manifestEntries>
+                                            <Main-Class>ru.vichukano.gym.bot.Main</Main-Class>
+                                        </manifestEntries>
+                                    </transformer>
+                                </transformers>
+                            </configuration>
+                        </execution>
                         <execution>
                             <id>shade-my-jar</id>
                             <phase>package</phase>
