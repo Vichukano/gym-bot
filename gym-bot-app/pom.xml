@@ -14,11 +14,20 @@
         <scala.binary.version>2.13</scala.binary.version>
     </properties>
 
-
     <dependencies>
         <dependency>
             <groupId>ru.vichukano</groupId>
             <artifactId>gym-bot-dao-excel</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ru.vichukano</groupId>
+            <artifactId>gym-bot-dao-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ru.vichukano</groupId>
+            <artifactId>gym-bot-dao-database</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

@@ -13,6 +13,7 @@
         <module>gym-bot-dao-excel</module>
         <module>gym-bot-dao-client</module>
         <module>gym-bot-dao-database</module>
+        <module>gym-bot-liquibase</module>
     </modules>
     <packaging>pom</packaging>
 
