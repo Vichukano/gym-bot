@@ -58,6 +58,7 @@ public class UserDaoQuery implements UserDao {
         }
     }
 
+    //Todo: should return saved ID
     @Override
     public void save(UserDto data) throws SQLException {
         log.trace("Try to save new user: {}", data);
