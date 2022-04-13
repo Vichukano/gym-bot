@@ -22,3 +22,4 @@ hs_err_pid*
 .idea
 *.iml
 bot.properties
+gym-bot-app/logs
