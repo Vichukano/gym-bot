@@ -80,6 +80,41 @@ public class UserExcelDao implements UserDao {
                 position++;
             }
         }
+        Row nolRow = sheet.createRow(position);
+        Cell nolName = nolRow.createCell(0);
+        nolName.setCellValue("NOL");
+        nolName.setCellStyle(headerStyle);
+        Cell nol = nolRow.createCell(1);
+        final Integer repsSum = exercises.stream().map(Exercise::getReps)
+                .flatMap(Collection::stream)
+                .reduce(Integer::sum)
+                .orElse(0);
+        nol.setCellValue(repsSum);
+        Row tonsRow = sheet.createRow(++position);
+        Cell tonsName = tonsRow.createCell(0);
+        tonsName.setCellValue("Tonnage");
+        tonsName.setCellStyle(headerStyle);
+        final BigDecimal tonnage = exercises.stream().map(e -> {
+                    List<Integer> reps = e.getReps();
+                    List<BigDecimal> weights = e.getWeights();
+                    List<BigDecimal> tons = new ArrayList<>(weights.size());
+                    for (int i = 0; i < weights.size(); i++) {
+                        Integer rep = reps.get(i);
+                        BigDecimal weight = weights.get(i);
+                        final BigDecimal res;
+                        if (!BigDecimal.ZERO.equals(weight)) {
+                            res = weight.multiply(BigDecimal.valueOf(rep));
+                        } else {
+                            res = BigDecimal.valueOf(rep);
+                        }
+                        tons.add(res);
+                    }
+                    return tons;
+                }).flatMap(Collection::stream)
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+        Cell tonnageCell = tonsRow.createCell(1);
+        tonnageCell.setCellValue(tonnage.doubleValue());
         String fileName = path + user.getId() + user.getName() + FILE_TYPE;
         try (var out = new FileOutputStream(fileName + NEW)) {
             workbook.write(out);
