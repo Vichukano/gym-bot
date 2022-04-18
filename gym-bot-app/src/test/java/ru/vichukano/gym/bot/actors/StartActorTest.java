@@ -22,12 +22,12 @@ import static ru.vichukano.gym.bot.domain.Command.START;
 
 public class StartActorTest {
     @ClassRule
-    public static final TestKitJunitResource testKit = new TestKitJunitResource();
+    public static final TestKitJunitResource TEST_KIT = new TestKitJunitResource();
 
     @Test
     public void whenSendStartTrainingCommandThenReceiveMessageWithExercisesListAndChangeUserState() {
-        ActorRef<StartActor.StartCommand> testTarget = testKit.spawn(StartActor.create(), "start-actor");
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
+        ActorRef<StartActor.StartCommand> testTarget = TEST_KIT.spawn(StartActor.create(), "start-actor");
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
         Update update = ModelFactory.update(Command.START.getCommand());
         User user = new User("id", "name", new Training(LocalDateTime.now(), new LinkedList<>()), State.SELECT_WEIGHT);
         SendMessage out = ModelFactory.message("Choose exercise from:\n");
@@ -41,8 +41,8 @@ public class StartActorTest {
 
     @Test
     public void whenSendStartTrainingCommandWitchInvalidTextThenReceiveMessageWithDefaultText() {
-        ActorRef<StartActor.StartCommand> testTarget = testKit.spawn(StartActor.create(), "start1-actor");
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
+        ActorRef<StartActor.StartCommand> testTarget = TEST_KIT.spawn(StartActor.create(), "start1-actor");
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
         Update update = ModelFactory.update("invalid text");
         User user = new User("id", "name", new Training(LocalDateTime.now(), new LinkedList<>()), State.SELECT_WEIGHT);
         SendMessage out = ModelFactory.message("Send me "

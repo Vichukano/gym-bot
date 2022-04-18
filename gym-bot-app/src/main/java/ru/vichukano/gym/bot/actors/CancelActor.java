@@ -44,7 +44,7 @@ public class CancelActor extends AbstractBehavior<CancelActor.CancelCommand> {
             user.getTraining()
                     .getExercises()
                     .removeLast();
-        }catch (Exception e) {
+        } catch (Exception e) {
             getContext().getLog().error("Exception while removing lang exercise. Command: {}", cancelCommand, e);
         }
         user.setState(SELECT_EXERCISE);

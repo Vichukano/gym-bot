@@ -21,7 +21,7 @@ import java.util.LinkedList;
 
 public class UserStateActor extends AbstractBehavior<UserStateActor.StateCommand> {
     private static final int MAX_IDLE_TIME_MINUTES = 60;
-    private final Object TIMER_KEY = new Object();
+    private static final Object TIMER_KEY = new Object();
     private final ActorRef<DispatcherActor.DispatcherCommand> dispatcher;
     private final User user;
     private LocalDateTime lastAccessTime;

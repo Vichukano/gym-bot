@@ -24,6 +24,9 @@ import java.util.stream.Stream;
 @Slf4j
 @AllArgsConstructor
 public class UserExcelDao implements UserDao {
+    private static final int WIDTH = 6000;
+    private static final short FONT_SIZE_12 = 12;
+    private static final short FONT_SIZE_14 = 14;
     private static final String FILE_TYPE = ".xlsx";
     private static final String NEW = "new";
     private final String path;
@@ -41,16 +44,16 @@ public class UserExcelDao implements UserDao {
         }
         Sheet sheet = workbook.createSheet("Training " + (workbook.getNumberOfSheets() + 1) + " " + lastTrainDate(user.getTrainings()));
         sheet.setSelected(true);
-        sheet.setColumnWidth(0, 6000);
-        sheet.setColumnWidth(1, 6000);
-        sheet.setColumnWidth(2, 6000);
+        sheet.setColumnWidth(0, WIDTH);
+        sheet.setColumnWidth(1, WIDTH);
+        sheet.setColumnWidth(2, WIDTH);
         Row header = sheet.createRow(0);
         CellStyle headerStyle = workbook.createCellStyle();
         headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
         headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         XSSFFont font = workbook.createFont();
         font.setFontName("Arial");
-        font.setFontHeightInPoints((short) 14);
+        font.setFontHeightInPoints(FONT_SIZE_14);
         font.setBold(true);
         headerStyle.setFont(font);
         Cell exerciseCell = header.createCell(0);
@@ -164,7 +167,7 @@ public class UserExcelDao implements UserDao {
         bold.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         XSSFFont font = (XSSFFont) workbook.createFont();
         font.setFontName("Arial");
-        font.setFontHeightInPoints((short) 12);
+        font.setFontHeightInPoints(FONT_SIZE_12);
         font.setBold(true);
         bold.setFont(font);
         cell.setCellStyle(bold);

@@ -12,12 +12,12 @@ import static ru.vichukano.gym.bot.domain.Command.START;
 
 public class HelpActorTest {
     @ClassRule
-    public static final TestKitJunitResource testKit = new TestKitJunitResource();
+    public static final TestKitJunitResource TEST_KIT = new TestKitJunitResource();
 
     @Test
     public void whenReceiveHelpMessageThenAnswer() {
-        ActorRef<HelpActor.HelpCommand> testTarget = testKit.spawn(HelpActor.create(), "help-actor");
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
+        ActorRef<HelpActor.HelpCommand> testTarget = TEST_KIT.spawn(HelpActor.create(), "help-actor");
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
         Update update = ModelFactory.update("");
         SendMessage out = ModelFactory.message("Hi! I am a gym training bot, I can help to track your progress in the gym."
                 + " Type " + START.getCommand() + " for start your training session."

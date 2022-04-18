@@ -42,7 +42,9 @@ public class ExerciseActor extends AbstractBehavior<ExerciseCommand> {
         getContext().getLog().debug("Receive message: {}", exercise);
         Update update = exercise.update;
         String chatID = MessageUtils.chatId(update);
-        String text = MessageUtils.text(update) != null ? MessageUtils.text(update) : MessageUtils.queryData(update);
+        String text = MessageUtils.text(update) != null
+                ? MessageUtils.text(update)
+                : MessageUtils.queryData(update);
         var out = new SendMessage();
         out.setChatId(chatID);
         exercise.user.setState(State.SELECT_EXERCISE);

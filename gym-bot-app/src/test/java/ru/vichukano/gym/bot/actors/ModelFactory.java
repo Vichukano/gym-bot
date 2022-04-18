@@ -7,7 +7,11 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class ModelFactory {
-    public static final long CHAT_ID = 1L;
+    private static final long CHAT_ID = 1L;
+
+    private ModelFactory() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static Update update(String text) {
         val update = new Update();
@@ -26,5 +30,4 @@ public class ModelFactory {
         msg.setText(text);
         return msg;
     }
-
 }
