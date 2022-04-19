@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,26 +37,46 @@ public class UserExcelDao implements UserDao {
     public void saveOrUpdate(SavedUser user) {
         log.trace("Start to save for: {}", user);
         Optional<File> file = getByFileName(user.getId() + user.getName());
-        XSSFWorkbook workbook;
-        if (file.isPresent()) {
-            workbook = (XSSFWorkbook) WorkbookFactory.create(file.get());
-        } else {
-            workbook = new XSSFWorkbook();
+        Workbook workbook = file.map(f -> {
+            try {
+                return WorkbookFactory.create(f);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).orElse(new XSSFWorkbook());
+        Sheet sheet = sheetForUser(workbook, user);
+        List<Exercise> exercises = fromLastTraining(user.getTrainings());
+        fillRows(sheet, exercises, workbook);
+        String fileName = path + user.getId() + user.getName() + FILE_TYPE;
+        try (var out = new FileOutputStream(fileName + NEW)) {
+            workbook.write(out);
+        } catch (IOException e) {
+            log.error("Exception while saving for: {}", user, e);
         }
+        Path p = Paths.get(fileName);
+        Files.deleteIfExists(p);
+        Files.move(Paths.get(fileName + NEW), p);
+        log.trace("Finish saving for: {}", user);
+    }
+
+    @Override
+    public Optional<File> getByFileName(String fileName) {
+        var storeDir = new File(path);
+        File[] files = storeDir.listFiles((dir, name) -> (fileName + FILE_TYPE).equals(name));
+        if (Objects.isNull(files) || files.length == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(files[0]);
+    }
+
+    private Sheet sheetForUser(Workbook workbook, SavedUser user) {
         Sheet sheet = workbook.createSheet("Training " + (workbook.getNumberOfSheets() + 1) + " " + lastTrainDate(user.getTrainings()));
         sheet.setSelected(true);
         sheet.setColumnWidth(0, WIDTH);
         sheet.setColumnWidth(1, WIDTH);
         sheet.setColumnWidth(2, WIDTH);
         Row header = sheet.createRow(0);
-        CellStyle headerStyle = workbook.createCellStyle();
-        headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
-        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        XSSFFont font = workbook.createFont();
-        font.setFontName("Arial");
-        font.setFontHeightInPoints(FONT_SIZE_14);
-        font.setBold(true);
-        headerStyle.setFont(font);
+        CellStyle headerStyle = headerStyle(workbook);
         Cell exerciseCell = header.createCell(0);
         exerciseCell.setCellValue("Exercise");
         exerciseCell.setCellStyle(headerStyle);
@@ -67,7 +88,22 @@ public class UserExcelDao implements UserDao {
         repsCell.setCellStyle(headerStyle);
         workbook.setActiveSheet(workbook.getSheetIndex(sheet));
         workbook.setSelectedTab(workbook.getSheetIndex(sheet));
-        List<Exercise> exercises = fromLastTraining(user.getTrainings());
+        return sheet;
+    }
+
+    private CellStyle headerStyle(Workbook workbook) {
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        Font font = workbook.createFont();
+        font.setFontName("Arial");
+        font.setFontHeightInPoints(FONT_SIZE_14);
+        font.setBold(true);
+        headerStyle.setFont(font);
+        return headerStyle;
+    }
+
+    private void fillRows(Sheet sheet, List<Exercise> exercises, Workbook workbook) {
         int position = 1;
         for (Exercise exercise : exercises) {
             List<BigDecimal> weights = exercise.getWeights();
@@ -85,80 +121,43 @@ public class UserExcelDao implements UserDao {
         }
         Row nolRow = sheet.createRow(position);
         Cell nolName = nolRow.createCell(0);
+        CellStyle headerStyle = headerStyle(workbook);
         nolName.setCellValue("NOL");
         nolName.setCellStyle(headerStyle);
         Cell nol = nolRow.createCell(1);
-        final Integer repsSum = exercises.stream().map(Exercise::getReps)
-                .flatMap(Collection::stream)
-                .reduce(Integer::sum)
-                .orElse(0);
+        final Integer repsSum = exercises.stream().map(Exercise::getReps).flatMap(Collection::stream).reduce(Integer::sum).orElse(0);
         nol.setCellValue(repsSum);
         Row tonsRow = sheet.createRow(++position);
         Cell tonsName = tonsRow.createCell(0);
         tonsName.setCellValue("Tonnage");
         tonsName.setCellStyle(headerStyle);
         final BigDecimal tonnage = exercises.stream().map(e -> {
-                    List<Integer> reps = e.getReps();
-                    List<BigDecimal> weights = e.getWeights();
-                    List<BigDecimal> tons = new ArrayList<>(weights.size());
-                    for (int i = 0; i < weights.size(); i++) {
-                        Integer rep = reps.get(i);
-                        BigDecimal weight = weights.get(i);
-                        final BigDecimal res;
-                        if (!BigDecimal.ZERO.equals(weight)) {
-                            res = weight.multiply(BigDecimal.valueOf(rep));
-                        } else {
-                            res = BigDecimal.valueOf(rep);
-                        }
-                        tons.add(res);
-                    }
-                    return tons;
-                }).flatMap(Collection::stream)
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
+            List<Integer> reps = e.getReps();
+            List<BigDecimal> weights = e.getWeights();
+            List<BigDecimal> tons = new ArrayList<>(weights.size());
+            for (int i = 0; i < weights.size(); i++) {
+                Integer rep = reps.get(i);
+                BigDecimal weight = weights.get(i);
+                final BigDecimal res;
+                if (!BigDecimal.ZERO.equals(weight)) {
+                    res = weight.multiply(BigDecimal.valueOf(rep));
+                } else {
+                    res = BigDecimal.valueOf(rep);
+                }
+                tons.add(res);
+            }
+            return tons;
+        }).flatMap(Collection::stream).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
         Cell tonnageCell = tonsRow.createCell(1);
         tonnageCell.setCellValue(tonnage.doubleValue());
-        String fileName = path + user.getId() + user.getName() + FILE_TYPE;
-        try (var out = new FileOutputStream(fileName + NEW)) {
-            workbook.write(out);
-        } catch (IOException e) {
-            log.error("Exception while saving for: {}", user, e);
-        }
-        Files.deleteIfExists(Paths.get(fileName));
-        Files.move(Paths.get(fileName + NEW), Paths.get(fileName));
-        log.trace("Finish saving for: {}", user);
-    }
-
-    @Override
-    public Optional<File> getByFileName(String fileName) {
-        var storeDir = new File(path);
-        File[] files = storeDir.listFiles((dir, name) -> (fileName + FILE_TYPE).equals(name));
-        if (Objects.isNull(files) || files.length == 0) {
-            return Optional.empty();
-        }
-        return Optional.of(files[0]);
     }
 
     private String lastTrainDate(Collection<Training> trainings) {
-        return Stream.ofNullable(trainings)
-                .flatMap(Collection::stream)
-                .filter(Objects::nonNull)
-                .map(Training::getTime)
-                .filter(Objects::nonNull)
-                .map(LocalDateTime::toLocalDate)
-                .filter(Objects::nonNull)
-                .map(Objects::toString)
-                .reduce((first, second) -> second)
-                .orElse(LocalDate.now().toString());
+        return Stream.ofNullable(trainings).flatMap(Collection::stream).filter(Objects::nonNull).map(Training::getTime).filter(Objects::nonNull).map(LocalDateTime::toLocalDate).filter(Objects::nonNull).map(Objects::toString).reduce((first, second) -> second).orElse(LocalDate.now().toString());
     }
 
     private List<Exercise> fromLastTraining(Collection<Training> trainings) {
-        return Stream.ofNullable(trainings)
-                .flatMap(Collection::stream)
-                .filter(Objects::nonNull)
-                .reduce((first, second) -> second)
-                .map(Training::getExercises)
-                .orElse(Collections.emptyList());
+        return Stream.ofNullable(trainings).flatMap(Collection::stream).filter(Objects::nonNull).reduce((first, second) -> second).map(Training::getExercises).orElse(Collections.emptyList());
     }
 
     private void makeBold(Cell cell, final Workbook workbook) {
@@ -172,5 +171,4 @@ public class UserExcelDao implements UserDao {
         bold.setFont(font);
         cell.setCellStyle(bold);
     }
-
 }
