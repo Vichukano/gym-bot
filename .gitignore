@@ -24,3 +24,5 @@ hs_err_pid*
 bot.properties
 gym-bot-app/logs
 dependency-reduced-pom.xml
+.vscode
+eclipse-formatter.xml

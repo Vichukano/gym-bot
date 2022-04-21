@@ -1,5 +1,11 @@
 package ru.vichukano.gym.bot.actors;
 
+import static ru.vichukano.gym.bot.util.MessageUtils.chatId;
+import java.io.File;
+import java.util.Objects;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.SupervisorStrategy;
@@ -8,18 +14,10 @@ import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 import lombok.Value;
-import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.vichukano.gym.bot.domain.dto.User;
 import ru.vichukano.gym.bot.service.UserService;
 
-import java.io.File;
-import java.util.Objects;
-
-import static ru.vichukano.gym.bot.util.MessageUtils.chatId;
-
-public class ReportActor extends AbstractBehavior<ReportActor.ReportCommand> {
+class ReportActor extends AbstractBehavior<ReportActor.ReportCommand> {
     private final UserService userService;
 
     private ReportActor(ActorContext<ReportCommand> context, UserService userService) {

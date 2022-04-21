@@ -1,15 +1,5 @@
 package ru.vichukano.gym.bot;
 
-import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import ru.vichukano.gym.bot.model.Exercise;
-import ru.vichukano.gym.bot.model.SavedUser;
-import ru.vichukano.gym.bot.model.Training;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,8 +9,30 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import ru.vichukano.gym.bot.model.Exercise;
+import ru.vichukano.gym.bot.model.SavedUser;
+import ru.vichukano.gym.bot.model.Training;
 
 @Slf4j
 @AllArgsConstructor
@@ -70,7 +82,10 @@ public class UserExcelDao implements UserDao {
     }
 
     private Sheet sheetForUser(Workbook workbook, SavedUser user) {
-        Sheet sheet = workbook.createSheet("Training " + (workbook.getNumberOfSheets() + 1) + " " + lastTrainDate(user.getTrainings()));
+        Sheet sheet = workbook.createSheet("Training "
+                + (workbook.getNumberOfSheets() + 1)
+                + " "
+                + lastTrainDate(user.getTrainings()));
         sheet.setSelected(true);
         sheet.setColumnWidth(0, WIDTH);
         sheet.setColumnWidth(1, WIDTH);
@@ -111,7 +126,7 @@ public class UserExcelDao implements UserDao {
                 Row nextExerciseRow = sheet.createRow(position);
                 Cell name = nextExerciseRow.createCell(0);
                 name.setCellValue(exercise.getName());
-                makeBold(name, workbook);
+                makeBoldFont(name, workbook);
                 Cell weight = nextExerciseRow.createCell(1);
                 weight.setCellValue(weights.get(j).doubleValue());
                 Cell reps = nextExerciseRow.createCell(2);
@@ -125,7 +140,11 @@ public class UserExcelDao implements UserDao {
         nolName.setCellValue("NOL");
         nolName.setCellStyle(headerStyle);
         Cell nol = nolRow.createCell(1);
-        final Integer repsSum = exercises.stream().map(Exercise::getReps).flatMap(Collection::stream).reduce(Integer::sum).orElse(0);
+        final Integer repsSum = exercises.stream()
+                .map(Exercise::getReps)
+                .flatMap(Collection::stream)
+                .reduce(Integer::sum)
+                .orElse(0);
         nol.setCellValue(repsSum);
         Row tonsRow = sheet.createRow(++position);
         Cell tonsName = tonsRow.createCell(0);
@@ -147,20 +166,26 @@ public class UserExcelDao implements UserDao {
                 tons.add(res);
             }
             return tons;
-        }).flatMap(Collection::stream).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+        })
+                .flatMap(Collection::stream)
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
         Cell tonnageCell = tonsRow.createCell(1);
         tonnageCell.setCellValue(tonnage.doubleValue());
     }
 
     private String lastTrainDate(Collection<Training> trainings) {
-        return Stream.ofNullable(trainings).flatMap(Collection::stream).filter(Objects::nonNull).map(Training::getTime).filter(Objects::nonNull).map(LocalDateTime::toLocalDate).filter(Objects::nonNull).map(Objects::toString).reduce((first, second) -> second).orElse(LocalDate.now().toString());
+        return Stream.ofNullable(trainings).flatMap(Collection::stream).filter(Objects::nonNull).map(Training::getTime)
+                .filter(Objects::nonNull).map(LocalDateTime::toLocalDate).filter(Objects::nonNull)
+                .map(Objects::toString).reduce((first, second) -> second).orElse(LocalDate.now().toString());
     }
 
     private List<Exercise> fromLastTraining(Collection<Training> trainings) {
-        return Stream.ofNullable(trainings).flatMap(Collection::stream).filter(Objects::nonNull).reduce((first, second) -> second).map(Training::getExercises).orElse(Collections.emptyList());
+        return Stream.ofNullable(trainings).flatMap(Collection::stream).filter(Objects::nonNull)
+                .reduce((first, second) -> second).map(Training::getExercises).orElse(Collections.emptyList());
     }
 
-    private void makeBold(Cell cell, final Workbook workbook) {
+    private void makeBoldFont(Cell cell, final Workbook workbook) {
         CellStyle bold = workbook.createCellStyle();
         bold.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
         bold.setFillPattern(FillPatternType.SOLID_FOREGROUND);

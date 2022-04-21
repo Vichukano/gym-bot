@@ -1,5 +1,18 @@
 package ru.vichukano.gym.bot.actors;
 
+import static ru.vichukano.gym.bot.domain.Command.CANCEL;
+import static ru.vichukano.gym.bot.domain.Command.EXERCISE;
+import static ru.vichukano.gym.bot.domain.Command.HELP;
+import static ru.vichukano.gym.bot.domain.Command.REPORT;
+import static ru.vichukano.gym.bot.domain.Command.START;
+import static ru.vichukano.gym.bot.domain.Command.STOP;
+import static ru.vichukano.gym.bot.domain.State.START_TRAINING;
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.SupervisorStrategy;
@@ -8,25 +21,16 @@ import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 import lombok.Value;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.vichukano.gym.bot.domain.State;
 import ru.vichukano.gym.bot.domain.dto.User;
 import ru.vichukano.gym.bot.factory.KeyboardFactory;
 import ru.vichukano.gym.bot.service.UserService;
 import ru.vichukano.gym.bot.util.MessageUtils;
 
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static ru.vichukano.gym.bot.domain.Command.*;
-import static ru.vichukano.gym.bot.domain.State.START_TRAINING;
-
-public class DispatcherActor extends AbstractBehavior<DispatcherActor.DispatcherCommand> {
+class DispatcherActor extends AbstractBehavior<DispatcherActor.DispatcherCommand> {
+    private static final String START_MESSAGE = "Send me %s for start training or %s for help.";
     private static final String USER_STATE_BOT_PREFIX = "user-state-actor-";
-    public final Map<String, ActorRef<UserStateActor.StateCommand>> userActors;
+    private final Map<String, ActorRef<UserStateActor.StateCommand>> userActors;
     private final ActorRef<BotActor.BotCommand> mainActor;
     private final ActorRef<HelpActor.HelpCommand> helpActor;
     private final ActorRef<StartActor.StartCommand> startActor;
@@ -37,7 +41,8 @@ public class DispatcherActor extends AbstractBehavior<DispatcherActor.Dispatcher
     private final ActorRef<StopActor.StopCommand> stopActor;
     private final ActorRef<ReportActor.ReportCommand> reportActor;
 
-    private DispatcherActor(ActorContext<DispatcherCommand> context, ActorRef<BotActor.BotCommand> mainActor, UserService userService) {
+    private DispatcherActor(ActorContext<DispatcherCommand> context,
+            ActorRef<BotActor.BotCommand> mainActor, UserService userService) {
         super(context);
         this.mainActor = mainActor;
         this.userActors = new ConcurrentHashMap<>();
@@ -54,7 +59,8 @@ public class DispatcherActor extends AbstractBehavior<DispatcherActor.Dispatcher
     }
 
     public static Behavior<DispatcherCommand> create(ActorRef<BotActor.BotCommand> mainActor, UserService userService) {
-        return Behaviors.<DispatcherCommand>supervise(Behaviors.setup(ctx -> new DispatcherActor(ctx, mainActor, userService)))
+        return Behaviors
+                .<DispatcherCommand>supervise(Behaviors.setup(ctx -> new DispatcherActor(ctx, mainActor, userService)))
                 .onFailure(SupervisorStrategy.restart().withStopChildren(false));
     }
 
@@ -74,7 +80,8 @@ public class DispatcherActor extends AbstractBehavior<DispatcherActor.Dispatcher
         String name = MessageUtils.userName(update);
         ActorRef<UserStateActor.StateCommand> userRef = userActors.get(userId);
         if (Objects.isNull(userRef)) {
-            userRef = getContext().spawn(UserStateActor.create(getContext().getSelf(), userId, name, START_TRAINING), USER_STATE_BOT_PREFIX + userId);
+            userRef = getContext().spawn(UserStateActor.create(getContext().getSelf(), userId, name, START_TRAINING),
+                    USER_STATE_BOT_PREFIX + userId);
             userActors.put(userId, userRef);
             getContext().getLog().info("Create new user context: {}", userRef);
         }
@@ -110,12 +117,7 @@ public class DispatcherActor extends AbstractBehavior<DispatcherActor.Dispatcher
             } else {
                 var out = new SendMessage();
                 out.setChatId(MessageUtils.chatId(update));
-                out.setText("Send me "
-                        + START.getCommand()
-                        + " for start training"
-                        + " or "
-                        + HELP.getCommand()
-                        + " for help.");
+                out.setText(String.format(START_MESSAGE, START.getCommand(), HELP.getCommand()));
                 out.setReplyMarkup(KeyboardFactory.startKeyboard());
                 mainActor.tell(new BotActor.ReplyMessage(out));
                 getContext().getLog().warn("Default case, nothing to dispatch");

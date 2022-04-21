@@ -1,5 +1,11 @@
 package ru.vichukano.gym.bot.actors;
 
+import static ru.vichukano.gym.bot.domain.Command.EXERCISE;
+import static ru.vichukano.gym.bot.domain.Command.STOP;
+import static ru.vichukano.gym.bot.domain.State.SELECT_WEIGHT;
+import java.util.Objects;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.SupervisorStrategy;
@@ -8,20 +14,14 @@ import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 import lombok.Value;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.vichukano.gym.bot.domain.Exercise;
 import ru.vichukano.gym.bot.domain.dto.User;
 import ru.vichukano.gym.bot.factory.KeyboardFactory;
 import ru.vichukano.gym.bot.util.MessageUtils;
 
-import java.util.Objects;
-
-import static ru.vichukano.gym.bot.domain.Command.EXERCISE;
-import static ru.vichukano.gym.bot.domain.Command.STOP;
-import static ru.vichukano.gym.bot.domain.State.SELECT_WEIGHT;
-
-public class RepsActor extends AbstractBehavior<RepsActor.RepsCommand> {
+class RepsActor extends AbstractBehavior<RepsActor.RepsCommand> {
+    private static final String REPS_TEXT = "You select %s reps.\n"
+            + "Select weight or %s for finish training or %s for choose another exercise.";
 
     private RepsActor(ActorContext<RepsCommand> context) {
         super(context);
@@ -50,13 +50,7 @@ public class RepsActor extends AbstractBehavior<RepsActor.RepsCommand> {
             if (reps <= 0) {
                 throw new IllegalArgumentException("Must be positive digit");
             }
-            out.setText("You select "
-                    + text
-                    + "reps.\nSelect weight or "
-                    + STOP.getCommand()
-                    + " for finish training or "
-                    + EXERCISE.getCommand()
-                    + " for choose another exercise.");
+            out.setText(String.format(REPS_TEXT, text, STOP.getCommand(), EXERCISE.getCommand()));
             User user = repsCommand.user;
             user.getTraining()
                     .getExercises()

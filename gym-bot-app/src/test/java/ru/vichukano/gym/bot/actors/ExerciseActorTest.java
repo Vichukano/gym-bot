@@ -58,7 +58,7 @@ public class ExerciseActorTest {
     public void testForDeadLift() {
         User user = new User("id", "name", new Training(LocalDateTime.now(), new LinkedList<>()), State.SELECT_EXERCISE);
         Update update = ModelFactory.update(DEAD_LIFT.getCommand());
-        SendMessage out = ModelFactory.message("Start to lift. Input weight in KG or " + CANCEL.getCommand() + " for undo");
+        SendMessage out = ModelFactory.message("Start to dead lift. Input weight in KG or " + CANCEL.getCommand() + " for undo");
         TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
         ActorRef<ExerciseActor.ExerciseCommand> testTarget = TEST_KIT.spawn(ExerciseActor.create(), "exercise-lift-actor");
 
