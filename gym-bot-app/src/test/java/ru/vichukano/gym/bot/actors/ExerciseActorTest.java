@@ -22,15 +22,15 @@ import static ru.vichukano.gym.bot.domain.Exercise.*;
 
 public class ExerciseActorTest {
     @ClassRule
-    public static final TestKitJunitResource testKit = new TestKitJunitResource();
+    public static final TestKitJunitResource TEST_KIT = new TestKitJunitResource();
 
     @Test
     public void testForBenchPress() {
         User user = new User("id", "name", new Training(LocalDateTime.now(), new LinkedList<>()), State.SELECT_EXERCISE);
         Update update = ModelFactory.update(BENCH_PRESS.getCommand());
         SendMessage out = ModelFactory.message("Start to bench. Input weight in KG or " + CANCEL.getCommand() + " for undo");
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
-        ActorRef<ExerciseActor.ExerciseCommand> testTarget = testKit.spawn(ExerciseActor.create(), "exercise-bench-actor");
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
+        ActorRef<ExerciseActor.ExerciseCommand> testTarget = TEST_KIT.spawn(ExerciseActor.create(), "exercise-bench-actor");
 
         testTarget.tell(new ExerciseActor.SelectExercise(update, user, probe.getRef()));
 
@@ -44,8 +44,8 @@ public class ExerciseActorTest {
         User user = new User("id", "name", new Training(LocalDateTime.now(), new LinkedList<>()), State.SELECT_EXERCISE);
         Update update = ModelFactory.update(SQUAT.getCommand());
         SendMessage out = ModelFactory.message("Start to squat. Input weight in KG or " + CANCEL.getCommand() + " for undo");
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
-        ActorRef<ExerciseActor.ExerciseCommand> testTarget = testKit.spawn(ExerciseActor.create(), "exercise-squat-actor");
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
+        ActorRef<ExerciseActor.ExerciseCommand> testTarget = TEST_KIT.spawn(ExerciseActor.create(), "exercise-squat-actor");
 
         testTarget.tell(new ExerciseActor.SelectExercise(update, user, probe.getRef()));
 
@@ -58,9 +58,9 @@ public class ExerciseActorTest {
     public void testForDeadLift() {
         User user = new User("id", "name", new Training(LocalDateTime.now(), new LinkedList<>()), State.SELECT_EXERCISE);
         Update update = ModelFactory.update(DEAD_LIFT.getCommand());
-        SendMessage out = ModelFactory.message("Start to lift. Input weight in KG or " + CANCEL.getCommand() + " for undo");
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
-        ActorRef<ExerciseActor.ExerciseCommand> testTarget = testKit.spawn(ExerciseActor.create(), "exercise-lift-actor");
+        SendMessage out = ModelFactory.message("Start to dead lift. Input weight in KG or " + CANCEL.getCommand() + " for undo");
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
+        ActorRef<ExerciseActor.ExerciseCommand> testTarget = TEST_KIT.spawn(ExerciseActor.create(), "exercise-lift-actor");
 
         testTarget.tell(new ExerciseActor.SelectExercise(update, user, probe.getRef()));
 
@@ -74,8 +74,8 @@ public class ExerciseActorTest {
         User user = new User("id", "name", new Training(LocalDateTime.now(), new LinkedList<>()), State.SELECT_EXERCISE);
         Update update = ModelFactory.update(OVERHEAD_PRESS.getCommand());
         SendMessage out = ModelFactory.message("Start to overhead press. Input weight in KG or " + CANCEL.getCommand() + " for undo");
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
-        ActorRef<ExerciseActor.ExerciseCommand> testTarget = testKit.spawn(ExerciseActor.create(), "exercise-overhead-press-actor");
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
+        ActorRef<ExerciseActor.ExerciseCommand> testTarget = TEST_KIT.spawn(ExerciseActor.create(), "exercise-overhead-press-actor");
 
         testTarget.tell(new ExerciseActor.SelectExercise(update, user, probe.getRef()));
 
@@ -89,8 +89,8 @@ public class ExerciseActorTest {
         User user = new User("id", "name", new Training(LocalDateTime.now(), new LinkedList<>()), State.SELECT_EXERCISE);
         Update update = ModelFactory.update(DUMBBELLS_OVERHEAD_PRESS.getCommand());
         SendMessage out = ModelFactory.message("Start to overhead dumbbells press. Input weight in KG or " + CANCEL.getCommand() + " for undo");
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
-        ActorRef<ExerciseActor.ExerciseCommand> testTarget = testKit.spawn(ExerciseActor.create(), "exercise-dumbbells-overhead-press-actor");
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
+        ActorRef<ExerciseActor.ExerciseCommand> testTarget = TEST_KIT.spawn(ExerciseActor.create(), "exercise-dumbbells-overhead-press-actor");
 
         testTarget.tell(new ExerciseActor.SelectExercise(update, user, probe.getRef()));
 
@@ -104,8 +104,8 @@ public class ExerciseActorTest {
         User user = new User("id", "name", new Training(LocalDateTime.now(), new LinkedList<>()), State.SELECT_EXERCISE);
         Update update = ModelFactory.update(DUMBBELLS_BENCH_PRESS.getCommand());
         SendMessage out = ModelFactory.message("Start to dumbbells bench press. Input weight in KG or " + CANCEL.getCommand() + " for undo");
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
-        ActorRef<ExerciseActor.ExerciseCommand> testTarget = testKit.spawn(ExerciseActor.create(), "exercise-dumbbells-bench-press-actor");
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
+        ActorRef<ExerciseActor.ExerciseCommand> testTarget = TEST_KIT.spawn(ExerciseActor.create(), "exercise-dumbbells-bench-press-actor");
 
         testTarget.tell(new ExerciseActor.SelectExercise(update, user, probe.getRef()));
 
@@ -120,8 +120,8 @@ public class ExerciseActorTest {
         Update update = ModelFactory.update(ABS.getCommand());
         SendMessage out = ModelFactory.message("Start to abs. Input weight in KG. If you do with body weigh, than input 0 or " + CANCEL.getCommand() + " for undo");
         out.setReplyMarkup(KeyboardFactory.zeroWeightButton());
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
-        ActorRef<ExerciseActor.ExerciseCommand> testTarget = testKit.spawn(ExerciseActor.create(), "exercise-abs-actor");
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
+        ActorRef<ExerciseActor.ExerciseCommand> testTarget = TEST_KIT.spawn(ExerciseActor.create(), "exercise-abs-actor");
 
         testTarget.tell(new ExerciseActor.SelectExercise(update, user, probe.getRef()));
 
@@ -136,8 +136,8 @@ public class ExerciseActorTest {
         Update update = ModelFactory.update(PULL_UP.getCommand());
         SendMessage out = ModelFactory.message("Start to pull ups. Input weight in KG. If you do it with body weight, than input 0 or " + CANCEL.getCommand() + " for undo");
         out.setReplyMarkup(KeyboardFactory.zeroWeightButton());
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
-        ActorRef<ExerciseActor.ExerciseCommand> testTarget = testKit.spawn(ExerciseActor.create(), "exercise-pull-up-actor");
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
+        ActorRef<ExerciseActor.ExerciseCommand> testTarget = TEST_KIT.spawn(ExerciseActor.create(), "exercise-pull-up-actor");
 
         testTarget.tell(new ExerciseActor.SelectExercise(update, user, probe.getRef()));
 
@@ -152,8 +152,8 @@ public class ExerciseActorTest {
         Update update = ModelFactory.update(PUSH_UP_ON_BARS.getCommand());
         SendMessage out = ModelFactory.message("Start to push ups on bars. Input weight in KG. If you do it with body weight, than input 0 or " + CANCEL.getCommand() + " for undo");
         out.setReplyMarkup(KeyboardFactory.zeroWeightButton());
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
-        ActorRef<ExerciseActor.ExerciseCommand> testTarget = testKit.spawn(ExerciseActor.create(), "exercise-push-on-bars-actor");
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
+        ActorRef<ExerciseActor.ExerciseCommand> testTarget = TEST_KIT.spawn(ExerciseActor.create(), "exercise-push-on-bars-actor");
 
         testTarget.tell(new ExerciseActor.SelectExercise(update, user, probe.getRef()));
 
@@ -168,8 +168,8 @@ public class ExerciseActorTest {
         Update update = ModelFactory.update("unknown");
         SendMessage out = ModelFactory.message("Input correct exercise form:\n");
         out.setReplyMarkup(KeyboardFactory.exercisesKeyboard());
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
-        ActorRef<ExerciseActor.ExerciseCommand> testTarget = testKit.spawn(ExerciseActor.create(), "exercise-unknown-actor");
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
+        ActorRef<ExerciseActor.ExerciseCommand> testTarget = TEST_KIT.spawn(ExerciseActor.create(), "exercise-unknown-actor");
 
         testTarget.tell(new ExerciseActor.SelectExercise(update, user, probe.getRef()));
 

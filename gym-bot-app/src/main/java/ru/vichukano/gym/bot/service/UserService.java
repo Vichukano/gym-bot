@@ -1,5 +1,9 @@
 package ru.vichukano.gym.bot.service;
 
+import java.io.File;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.vichukano.gym.bot.UserDao;
@@ -7,12 +11,6 @@ import ru.vichukano.gym.bot.domain.dto.User;
 import ru.vichukano.gym.bot.model.Exercise;
 import ru.vichukano.gym.bot.model.SavedUser;
 import ru.vichukano.gym.bot.model.Training;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,8 +23,7 @@ public class UserService {
                 .map(exc -> new Exercise(exc.getName(), exc.getWeights(), exc.getReps()))
                 .collect(Collectors.toList());
         var training = new Training(user.getTraining().getTime(), exercises);
-        SavedUser forSave = new SavedUser(user.getId(), user.getName(), new ArrayList<>());
-        forSave.getTrainings().add(training);
+        SavedUser forSave = new SavedUser(user.getId(), user.getName(), List.of(training));
         userDao.saveOrUpdate(forSave);
         log.trace("Successfully save user: {}", forSave);
     }

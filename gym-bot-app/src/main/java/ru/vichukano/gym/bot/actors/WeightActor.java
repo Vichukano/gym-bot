@@ -1,5 +1,10 @@
 package ru.vichukano.gym.bot.actors;
 
+import static ru.vichukano.gym.bot.domain.Command.CANCEL;
+import static ru.vichukano.gym.bot.domain.State.SELECT_REPS;
+import java.math.BigDecimal;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.SupervisorStrategy;
@@ -8,17 +13,12 @@ import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 import lombok.Value;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.vichukano.gym.bot.domain.dto.User;
 import ru.vichukano.gym.bot.util.MessageUtils;
 
-import java.math.BigDecimal;
-
-import static ru.vichukano.gym.bot.domain.Command.CANCEL;
-import static ru.vichukano.gym.bot.domain.State.SELECT_REPS;
-
-public class WeightActor extends AbstractBehavior<WeightActor.WeightCommand> {
+class WeightActor extends AbstractBehavior<WeightActor.WeightCommand> {
+    private static final String WEIGHT_TEXT = "You select %sKG. Select reps for this weight or %s for undo";
+    private static final String INVALID_WEIGHT_TEXT = "Invalid weight %s! Weight must be digit";
 
     private WeightActor(ActorContext<WeightCommand> context) {
         super(context);
@@ -47,7 +47,7 @@ public class WeightActor extends AbstractBehavior<WeightActor.WeightCommand> {
             if (weight.compareTo(BigDecimal.ZERO) < 0) {
                 throw new IllegalArgumentException("Must be positive digit");
             }
-            out.setText("You select " + text + "KG. Select reps for this weight or " + CANCEL.getCommand() + " for undo");
+            out.setText(String.format(WEIGHT_TEXT, text, CANCEL.getCommand()));
             User user = weightCommand.user;
             user.getTraining()
                     .getExercises()
@@ -57,14 +57,13 @@ public class WeightActor extends AbstractBehavior<WeightActor.WeightCommand> {
             user.setState(SELECT_REPS);
         } catch (Exception e) {
             getContext().getLog().error("Exception while processing select weight message: ", e);
-            out.setText("Invalid weight " + text + "! Weight must be digit");
+            out.setText(String.format(INVALID_WEIGHT_TEXT, text));
         }
         weightCommand.replyTo.tell(new BotActor.ReplyMessage(out));
         return this;
     }
 
     public interface WeightCommand {
-
     }
 
     @Value

@@ -1,6 +1,5 @@
 package ru.vichukano.gym.bot.util;
 
-import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.FileInputStream;
@@ -8,8 +7,11 @@ import java.io.IOException;
 import java.util.Properties;
 
 @Slf4j
-@UtilityClass
 public class PropertiesReader {
+
+    private PropertiesReader() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static Properties loadFromCp(String name) {
         var props = new Properties();

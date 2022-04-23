@@ -13,6 +13,10 @@ import java.util.Properties;
 @Slf4j
 public class Main {
 
+    private Main() {
+        throw new IllegalStateException("Main class");
+    }
+
     public static void main(String[] args) throws TelegramApiException {
         log.debug("Starting bot!");
         if (args.length < 1) {

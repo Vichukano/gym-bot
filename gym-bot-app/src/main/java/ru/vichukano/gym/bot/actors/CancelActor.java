@@ -1,5 +1,8 @@
 package ru.vichukano.gym.bot.actors;
 
+import static ru.vichukano.gym.bot.domain.State.SELECT_EXERCISE;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.SupervisorStrategy;
@@ -8,16 +11,11 @@ import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 import lombok.Value;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.vichukano.gym.bot.domain.dto.User;
 import ru.vichukano.gym.bot.factory.KeyboardFactory;
 import ru.vichukano.gym.bot.util.MessageUtils;
 
-import static ru.vichukano.gym.bot.domain.State.SELECT_EXERCISE;
-
-public class CancelActor extends AbstractBehavior<CancelActor.CancelCommand> {
-
+class CancelActor extends AbstractBehavior<CancelActor.CancelCommand> {
     private CancelActor(ActorContext<CancelCommand> context) {
         super(context);
     }
@@ -44,7 +42,7 @@ public class CancelActor extends AbstractBehavior<CancelActor.CancelCommand> {
             user.getTraining()
                     .getExercises()
                     .removeLast();
-        }catch (Exception e) {
+        } catch (Exception e) {
             getContext().getLog().error("Exception while removing lang exercise. Command: {}", cancelCommand, e);
         }
         user.setState(SELECT_EXERCISE);

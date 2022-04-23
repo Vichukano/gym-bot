@@ -1,5 +1,18 @@
 package ru.vichukano.gym.bot.actors;
 
+import static ru.vichukano.gym.bot.domain.Command.CANCEL;
+import static ru.vichukano.gym.bot.domain.Exercise.ABS;
+import static ru.vichukano.gym.bot.domain.Exercise.BENCH_PRESS;
+import static ru.vichukano.gym.bot.domain.Exercise.DEAD_LIFT;
+import static ru.vichukano.gym.bot.domain.Exercise.DUMBBELLS_BENCH_PRESS;
+import static ru.vichukano.gym.bot.domain.Exercise.DUMBBELLS_OVERHEAD_PRESS;
+import static ru.vichukano.gym.bot.domain.Exercise.OVERHEAD_PRESS;
+import static ru.vichukano.gym.bot.domain.Exercise.PULL_UP;
+import static ru.vichukano.gym.bot.domain.Exercise.PUSH_UP;
+import static ru.vichukano.gym.bot.domain.Exercise.PUSH_UP_ON_BARS;
+import static ru.vichukano.gym.bot.domain.Exercise.SQUAT;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.SupervisorStrategy;
@@ -8,19 +21,30 @@ import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 import lombok.Value;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.vichukano.gym.bot.actors.ExerciseActor.ExerciseCommand;
 import ru.vichukano.gym.bot.domain.State;
 import ru.vichukano.gym.bot.domain.dto.Exercise;
 import ru.vichukano.gym.bot.domain.dto.User;
 import ru.vichukano.gym.bot.factory.KeyboardFactory;
 import ru.vichukano.gym.bot.util.MessageUtils;
 
-import static ru.vichukano.gym.bot.actors.ExerciseActor.ExerciseCommand;
-import static ru.vichukano.gym.bot.domain.Command.CANCEL;
-import static ru.vichukano.gym.bot.domain.Exercise.*;
-
-public class ExerciseActor extends AbstractBehavior<ExerciseCommand> {
+class ExerciseActor extends AbstractBehavior<ExerciseCommand> {
+    private static final String BENCH_PRESS_TEXT = "Start to bench. Input weight in KG or %s for undo";
+    private static final String SQUAT_TEXT = "Start to squat. Input weight in KG or %s for undo";
+    private static final String DEAD_LIFT_TEXT = "Start to dead lift. Input weight in KG or %s for undo";
+    private static final String OVERHEAD_PRESS_TEXT = "Start to overhead press. Input weight in KG or %s for undo";
+    private static final String DUMBBELLS_OVERHEAD_PRESS_TEXT = "Start to overhead dumbbells press. "
+            + "Input weight in KG or %s for undo";
+    private static final String DUMBBELLS_BENCH_PRESS_TEXT = "Start to dumbbells bench press. "
+            + "Input weight in KG or %s for undo";
+    private static final String ABS_TEXT = "Start to abs. Input weight in KG. "
+            + "If you do with body weigh, than input 0 or %s for undo";
+    private static final String PULL_UP_TEXT = "Start to pull ups. Input weight in KG. "
+            + "If you do it with body weight, than input 0 or %s for undo";
+    private static final String PUSH_UP_TEXT = "Start to push ups. Input weight in KG. "
+            + "If you do it with body weight, than input 0 or %s for undo";
+    private static final String PUSH_UP_ON_BARS_TEXT = "Start to push ups on bars. Input weight in KG. "
+            + "If you do it with body weight, than input 0 or %s for undo";
 
     private ExerciseActor(ActorContext<ExerciseCommand> context) {
         super(context);
@@ -42,60 +66,63 @@ public class ExerciseActor extends AbstractBehavior<ExerciseCommand> {
         getContext().getLog().debug("Receive message: {}", exercise);
         Update update = exercise.update;
         String chatID = MessageUtils.chatId(update);
-        String text = MessageUtils.text(update) != null ? MessageUtils.text(update) : MessageUtils.queryData(update);
+        String text = MessageUtils.text(update) != null
+                ? MessageUtils.text(update)
+                : MessageUtils.queryData(update);
         var out = new SendMessage();
         out.setChatId(chatID);
         exercise.user.setState(State.SELECT_EXERCISE);
+        String cancel = CANCEL.getCommand();
         if (BENCH_PRESS.getCommand().equals(text)) {
-            out.setText("Start to bench. Input weight in KG or " + CANCEL.getCommand() + " for undo");
+            out.setText(String.format(BENCH_PRESS_TEXT, cancel));
             User user = exercise.user;
             user.getTraining().getExercises().add(new Exercise(BENCH_PRESS.name()));
             user.setState(State.SELECT_WEIGHT);
         } else if (SQUAT.getCommand().equals(text)) {
-            out.setText("Start to squat. Input weight in KG or " + CANCEL.getCommand() + " for undo");
+            out.setText(String.format(SQUAT_TEXT, cancel));
             User user = exercise.user;
             user.getTraining().getExercises().add(new Exercise(SQUAT.name()));
             user.setState(State.SELECT_WEIGHT);
         } else if (DEAD_LIFT.getCommand().equals(text)) {
-            out.setText("Start to lift. Input weight in KG or " + CANCEL.getCommand() + " for undo");
+            out.setText(String.format(DEAD_LIFT_TEXT, cancel));
             User user = exercise.user;
             user.getTraining().getExercises().add(new Exercise(DEAD_LIFT.name()));
             user.setState(State.SELECT_WEIGHT);
         } else if (OVERHEAD_PRESS.getCommand().equals(text)) {
-            out.setText("Start to overhead press. Input weight in KG or " + CANCEL.getCommand() + " for undo");
+            out.setText(String.format(OVERHEAD_PRESS_TEXT, cancel));
             User user = exercise.user;
             user.getTraining().getExercises().add(new Exercise(OVERHEAD_PRESS.name()));
             user.setState(State.SELECT_WEIGHT);
         } else if (DUMBBELLS_OVERHEAD_PRESS.getCommand().equals(text)) {
-            out.setText("Start to overhead dumbbells press. Input weight in KG or " + CANCEL.getCommand() + " for undo");
+            out.setText(String.format(DUMBBELLS_OVERHEAD_PRESS_TEXT, cancel));
             User user = exercise.user;
             user.getTraining().getExercises().add(new Exercise(DUMBBELLS_OVERHEAD_PRESS.name()));
             user.setState(State.SELECT_WEIGHT);
         } else if (DUMBBELLS_BENCH_PRESS.getCommand().equals(text)) {
-            out.setText("Start to dumbbells bench press. Input weight in KG or " + CANCEL.getCommand() + " for undo");
+            out.setText(String.format(DUMBBELLS_BENCH_PRESS_TEXT, cancel));
             User user = exercise.user;
             user.getTraining().getExercises().add(new Exercise(DUMBBELLS_BENCH_PRESS.name()));
             user.setState(State.SELECT_WEIGHT);
         } else if (ABS.getCommand().equals(text)) {
-            out.setText("Start to abs. Input weight in KG. If you do with body weigh, than input 0 or " + CANCEL.getCommand() + " for undo");
+            out.setText(String.format(ABS_TEXT, cancel));
             out.setReplyMarkup(KeyboardFactory.zeroWeightButton());
             User user = exercise.user;
             user.getTraining().getExercises().add(new Exercise(ABS.name()));
             user.setState(State.SELECT_WEIGHT);
         } else if (PULL_UP.getCommand().equals(text)) {
-            out.setText("Start to pull ups. Input weight in KG. If you do it with body weight, than input 0 or " + CANCEL.getCommand() + " for undo");
+            out.setText(String.format(PULL_UP_TEXT, cancel));
             out.setReplyMarkup(KeyboardFactory.zeroWeightButton());
             User user = exercise.user;
             user.getTraining().getExercises().add(new Exercise(PULL_UP.name()));
             user.setState(State.SELECT_WEIGHT);
         } else if (PUSH_UP.getCommand().equals(text)) {
-            out.setText("Start to push ups. Input weight in KG. If you do it with body weight, than input 0 or " + CANCEL.getCommand() + " for undo");
+            out.setText(String.format(PUSH_UP_TEXT, cancel));
             out.setReplyMarkup(KeyboardFactory.zeroWeightButton());
             User user = exercise.user;
             user.getTraining().getExercises().add(new Exercise(PUSH_UP.name()));
             user.setState(State.SELECT_WEIGHT);
         } else if (PUSH_UP_ON_BARS.getCommand().equals(text)) {
-            out.setText("Start to push ups on bars. Input weight in KG. If you do it with body weight, than input 0 or " + CANCEL.getCommand() + " for undo");
+            out.setText(String.format(PUSH_UP_ON_BARS_TEXT, cancel));
             out.setReplyMarkup(KeyboardFactory.zeroWeightButton());
             User user = exercise.user;
             user.getTraining().getExercises().add(new Exercise(PUSH_UP_ON_BARS.name()));

@@ -23,11 +23,11 @@ import static ru.vichukano.gym.bot.domain.Exercise.BENCH_PRESS;
 
 public class CancelActorTest {
     @ClassRule
-    public static final TestKitJunitResource testKit = new TestKitJunitResource();
+    public static final TestKitJunitResource TEST_KIT = new TestKitJunitResource();
 
     @Test
     public void whenReceiveCancelMessageThenUndoLastExerciseAndAnswer() {
-        ActorRef<CancelActor.CancelCommand> testTarget = testKit.spawn(CancelActor.create(), "cancel-actor");
+        ActorRef<CancelActor.CancelCommand> testTarget = TEST_KIT.spawn(CancelActor.create(), "cancel-actor");
         Exercise exercise1 = new Exercise(BENCH_PRESS.name());
         exercise1.getWeights().add(new BigDecimal("100"));
         exercise1.getReps().add(10);
@@ -37,7 +37,7 @@ public class CancelActorTest {
         exercises.add(exercise1);
         exercises.add(exercise2);
         User user = new User("1", "test", new Training(LocalDateTime.now(), exercises), State.SELECT_WEIGHT);
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
         Update update = ModelFactory.update("");
         SendMessage out = new SendMessage();
         out.setChatId(String.valueOf(update.getMessage().getChatId()));

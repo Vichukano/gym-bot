@@ -1,5 +1,10 @@
 package ru.vichukano.gym.bot.actors;
 
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.SupervisorStrategy;
@@ -8,14 +13,8 @@ import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 import lombok.Value;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.vichukano.gym.bot.actors.BotActor.BotCommand;
 import ru.vichukano.gym.bot.service.UserService;
-
-import static ru.vichukano.gym.bot.actors.BotActor.BotCommand;
 
 public class BotActor extends AbstractBehavior<BotCommand> {
     private final TelegramLongPollingBot bot;
@@ -24,7 +23,8 @@ public class BotActor extends AbstractBehavior<BotCommand> {
     private BotActor(ActorContext<BotCommand> context, TelegramLongPollingBot bot, UserService userService) {
         super(context);
         this.bot = bot;
-        this.dispatcher = getContext().spawn(DispatcherActor.create(getContext().getSelf(), userService), "dispatcher-actor");
+        this.dispatcher = getContext()
+                .spawn(DispatcherActor.create(getContext().getSelf(), userService), "dispatcher-actor");
     }
 
     public static Behavior<BotCommand> create(TelegramLongPollingBot bot, UserService service) {

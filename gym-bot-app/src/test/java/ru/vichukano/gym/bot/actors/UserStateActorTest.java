@@ -16,15 +16,15 @@ import java.util.LinkedList;
 
 public class UserStateActorTest {
     @ClassRule
-    public static final TestKitJunitResource testKit = new TestKitJunitResource();
+    public static final TestKitJunitResource TEST_KIT = new TestKitJunitResource();
 
     @Test
     public void testForDifferentUsers() {
         User one = new User("10", "name1", new Training(LocalDateTime.now(), new LinkedList<>()), State.START_TRAINING);
         User two = new User("20", "name2", new Training(LocalDateTime.now(), new LinkedList<>()), State.SELECT_EXERCISE);
-        TestProbe<DispatcherActor.DispatcherCommand> probe = testKit.createTestProbe();
-        ActorRef<UserStateActor.StateCommand> stateOne = testKit.spawn(UserStateActor.create(probe.getRef(), one.getId(), one.getName(), one.getState()), "state-1");
-        ActorRef<UserStateActor.StateCommand> stateTwo = testKit.spawn(UserStateActor.create(probe.getRef(), two.getId(), two.getName(), two.getState()), "state-2");
+        TestProbe<DispatcherActor.DispatcherCommand> probe = TEST_KIT.createTestProbe();
+        ActorRef<UserStateActor.StateCommand> stateOne = TEST_KIT.spawn(UserStateActor.create(probe.getRef(), one.getId(), one.getName(), one.getState()), "state-1");
+        ActorRef<UserStateActor.StateCommand> stateTwo = TEST_KIT.spawn(UserStateActor.create(probe.getRef(), two.getId(), two.getName(), two.getState()), "state-2");
         Update update = ModelFactory.update("test");
 
         stateOne.tell(new UserStateActor.GetState(LocalDateTime.now(), update));

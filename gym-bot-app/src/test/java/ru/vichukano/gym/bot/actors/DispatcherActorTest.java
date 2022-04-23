@@ -20,18 +20,18 @@ import static ru.vichukano.gym.bot.domain.Command.*;
 
 public class DispatcherActorTest {
     @ClassRule
-    public static final TestKitJunitResource testKit = new TestKitJunitResource();
+    public static final TestKitJunitResource TEST_KIT = new TestKitJunitResource();
 
     @AfterClass
     public static void reset() {
-        testKit.system().terminate();
+        TEST_KIT.system().terminate();
     }
 
     @Test
     public void testHelpCommand() {
         UserService mockService = Mockito.mock(UserService.class);
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
-        ActorRef<DispatcherActor.DispatcherCommand> testTarget = testKit.spawn(DispatcherActor.create(probe.getRef(), mockService), "test-1");
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
+        ActorRef<DispatcherActor.DispatcherCommand> testTarget = TEST_KIT.spawn(DispatcherActor.create(probe.getRef(), mockService), "test-1");
         Update update = withUser(HELP.getCommand(), 1, "name");
         SendMessage out = ModelFactory.message("Hi! I am a gym training bot, I can help to track your progress in the gym."
                 + " Type " + START.getCommand() + " for start your training session."
@@ -46,8 +46,8 @@ public class DispatcherActorTest {
     @Test
     public void testStartCommand() {
         UserService mockService = Mockito.mock(UserService.class);
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
-        ActorRef<DispatcherActor.DispatcherCommand> testTarget = testKit.spawn(DispatcherActor.create(probe.getRef(), mockService), "test-2");
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
+        ActorRef<DispatcherActor.DispatcherCommand> testTarget = TEST_KIT.spawn(DispatcherActor.create(probe.getRef(), mockService), "test-2");
         Update update = withUser(START.getCommand(), 1, "name");
         SendMessage out = ModelFactory.message("Choose exercise from:\n");
         out.setReplyMarkup(KeyboardFactory.exercisesKeyboard());
@@ -60,8 +60,8 @@ public class DispatcherActorTest {
     @Test
     public void testCancelCommand() {
         UserService mockService = Mockito.mock(UserService.class);
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
-        ActorRef<DispatcherActor.DispatcherCommand> testTarget = testKit.spawn(DispatcherActor.create(probe.getRef(), mockService), "test-3");
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
+        ActorRef<DispatcherActor.DispatcherCommand> testTarget = TEST_KIT.spawn(DispatcherActor.create(probe.getRef(), mockService), "test-3");
         Update update = withUser(CANCEL.getCommand(), 1, "name");
         SendMessage out = ModelFactory.message("Successfully undo exercise, input new exercise form:\n");
         out.setReplyMarkup(KeyboardFactory.exercisesKeyboard());
@@ -74,8 +74,8 @@ public class DispatcherActorTest {
     @Test
     public void testStopCommand() {
         UserService mockService = Mockito.mock(UserService.class);
-        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
-        ActorRef<DispatcherActor.DispatcherCommand> testTarget = testKit.spawn(DispatcherActor.create(probe.getRef(), mockService), "test-4");
+        TestProbe<BotActor.BotCommand> probe = TEST_KIT.createTestProbe();
+        ActorRef<DispatcherActor.DispatcherCommand> testTarget = TEST_KIT.spawn(DispatcherActor.create(probe.getRef(), mockService), "test-4");
         Update update = withUser(STOP.getCommand(), 1, "name");
         SendMessage out = ModelFactory.message("Successfully undo exercise, input new exercise form:\n");
         out.setText("Stop training. Your results:\n"
