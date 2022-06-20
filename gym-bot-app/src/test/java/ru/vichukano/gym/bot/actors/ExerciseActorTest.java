@@ -177,4 +177,64 @@ public class ExerciseActorTest {
         assertSame(user.getState(), State.SELECT_EXERCISE);
         assertEquals(0, user.getTraining().getExercises().size());
     }
+    
+    @Test
+    public void testForBarbellBicepsCurl() {
+        User user = new User("id", "name", new Training(LocalDateTime.now(), new LinkedList<>()), State.SELECT_EXERCISE);
+        Update update = ModelFactory.update(BARBELL_BECEPS_CURL.getCommand());
+        SendMessage out = ModelFactory.message("Start to barbell biceps curls. Input weight in KG or " + CANCEL.getCommand() + " for undo");
+        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
+        ActorRef<ExerciseActor.ExerciseCommand> testTarget = testKit.spawn(ExerciseActor.create(), "exercise-barbell-biceps-curl-actor");
+
+        testTarget.tell(new ExerciseActor.SelectExercise(update, user, probe.getRef()));
+
+        probe.expectMessage(new BotActor.ReplyMessage(out));
+        assertSame(user.getState(), State.SELECT_WEIGHT);
+        assertTrue(user.getTraining().getExercises().stream().map(Exercise::getName).anyMatch(n -> n.equals(BARBELL_BECEPS_CURL.name())));
+    }
+    
+    @Test
+    public void testForDumbellBicepsCurl() {
+        User user = new User("id", "name", new Training(LocalDateTime.now(), new LinkedList<>()), State.SELECT_EXERCISE);
+        Update update = ModelFactory.update(DUMBBELLS_BICEPS_CURL.getCommand());
+        SendMessage out = ModelFactory.message("Start to dumbbells biceps curls. Input weight in KG or " + CANCEL.getCommand() + " for undo");
+        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
+        ActorRef<ExerciseActor.ExerciseCommand> testTarget = testKit.spawn(ExerciseActor.create(), "exercise-dumbbells-biceps-curl-actor");
+
+        testTarget.tell(new ExerciseActor.SelectExercise(update, user, probe.getRef()));
+
+        probe.expectMessage(new BotActor.ReplyMessage(out));
+        assertSame(user.getState(), State.SELECT_WEIGHT);
+        assertTrue(user.getTraining().getExercises().stream().map(Exercise::getName).anyMatch(n -> n.equals(DUMBBELLS_BICEPS_CURL.name())));
+    }
+    
+    @Test
+    public void testForHackSquatMachime() {
+        User user = new User("id", "name", new Training(LocalDateTime.now(), new LinkedList<>()), State.SELECT_EXERCISE);
+        Update update = ModelFactory.update(HACK_SQUAT_MACHINE.getCommand());
+        SendMessage out = ModelFactory.message("Start to hack squat machine. Input weight in KG or " + CANCEL.getCommand() + " for undo");
+        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
+        ActorRef<ExerciseActor.ExerciseCommand> testTarget = testKit.spawn(ExerciseActor.create(), "exercise-hack-squat-machine-actor");
+
+        testTarget.tell(new ExerciseActor.SelectExercise(update, user, probe.getRef()));
+
+        probe.expectMessage(new BotActor.ReplyMessage(out));
+        assertSame(user.getState(), State.SELECT_WEIGHT);
+        assertTrue(user.getTraining().getExercises().stream().map(Exercise::getName).anyMatch(n -> n.equals(HACK_SQUAT_MACHINE.name())));
+    }
+    
+    @Test
+    public void testForLegPressMachine() {
+        User user = new User("id", "name", new Training(LocalDateTime.now(), new LinkedList<>()), State.SELECT_EXERCISE);
+        Update update = ModelFactory.update(LEG_PRESS_MACHINE.getCommand());
+        SendMessage out = ModelFactory.message("Start to leg press machine. Input weight in KG or " + CANCEL.getCommand() + " for undo");
+        TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
+        ActorRef<ExerciseActor.ExerciseCommand> testTarget = testKit.spawn(ExerciseActor.create(), "exercise-leg-precc-machine-actor");
+
+        testTarget.tell(new ExerciseActor.SelectExercise(update, user, probe.getRef()));
+
+        probe.expectMessage(new BotActor.ReplyMessage(out));
+        assertSame(user.getState(), State.SELECT_WEIGHT);
+        assertTrue(user.getTraining().getExercises().stream().map(Exercise::getName).anyMatch(n -> n.equals(LEG_PRESS_MACHINE.name())));
+    }
 }

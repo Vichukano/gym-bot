@@ -100,6 +100,26 @@ public class ExerciseActor extends AbstractBehavior<ExerciseCommand> {
             User user = exercise.user;
             user.getTraining().getExercises().add(new Exercise(PUSH_UP_ON_BARS.name()));
             user.setState(State.SELECT_WEIGHT);
+        } else if(DUMBBELLS_BICEPS_CURL.getCommand().equals(text)) {
+            out.setText("Start to dumbbells biceps curls. Input weight in KG or " + CANCEL.getCommand() + " for undo");
+            User user = exercise.user;
+            user.getTraining().getExercises().add(new Exercise(DUMBBELLS_BICEPS_CURL.name()));
+            user.setState(State.SELECT_WEIGHT);
+        } else if(BARBELL_BECEPS_CURL.getCommand().equals(text)) {
+            out.setText("Start to barbell biceps curls. Input weight in KG or " + CANCEL.getCommand() + " for undo");
+            User user = exercise.user;
+            user.getTraining().getExercises().add(new Exercise(BARBELL_BECEPS_CURL.name()));
+            user.setState(State.SELECT_WEIGHT);
+        } else if(HACK_SQUAT_MACHINE.getCommand().equals(text)) {
+            out.setText("Start to hack squat machine. Input weight in KG or " + CANCEL.getCommand() + " for undo");
+            User user = exercise.user;
+            user.getTraining().getExercises().add(new Exercise(HACK_SQUAT_MACHINE.name()));
+            user.setState(State.SELECT_WEIGHT);
+        } else if(LEG_PRESS_MACHINE.getCommand().equals(text)) {
+            out.setText("Start to leg press machine. Input weight in KG or " + CANCEL.getCommand() + " for undo");
+            User user = exercise.user;
+            user.getTraining().getExercises().add(new Exercise(LEG_PRESS_MACHINE.name()));
+            user.setState(State.SELECT_WEIGHT);
         } else {
             out.setText("Input correct exercise form:\n");
             out.setReplyMarkup(KeyboardFactory.exercisesKeyboard());
