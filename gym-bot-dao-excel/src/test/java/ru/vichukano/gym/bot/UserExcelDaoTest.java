@@ -33,7 +33,7 @@ public class UserExcelDaoTest {
                 List.of(new BigDecimal(300), new BigDecimal(310), new BigDecimal(400)),
                 List.of(4, 4, 3)
         );
-        var training = new Training(LocalDateTime.now(), List.of(bench, squat, lift));
+        var training = new Training(LocalDateTime.now(), "", List.of(bench, squat, lift));
         return new SavedUser("1232", "test", List.of(training));
     }
 

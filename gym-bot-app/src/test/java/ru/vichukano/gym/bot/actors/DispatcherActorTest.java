@@ -77,21 +77,12 @@ public class DispatcherActorTest {
         TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
         ActorRef<DispatcherActor.DispatcherCommand> testTarget = testKit.spawn(DispatcherActor.create(probe.getRef(), mockService), "test-4");
         Update update = withUser(STOP.getCommand(), 1, "name");
-        SendMessage out = ModelFactory.message("Successfully undo exercise, input new exercise form:\n");
-        out.setText("Stop training. Your results:\n"
-                + "Training session time: "
-                + Duration.ofMinutes(0).toMinutes()
-                + " minutes"
-                + "\nExercises:\n"
-                + "\ntype "
-                + Command.REPORT.getCommand()
-                + " for send training report."
-        );
+        SendMessage out = ModelFactory.message("Write training description or skip it and type: " + Command.STOP.getCommand());
 
         testTarget.tell(new DispatcherActor.DispatcherMessage(update));
 
         probe.expectMessage(Duration.ofSeconds(1), new BotActor.ReplyMessage(out));
-        Mockito.verify(mockService, Mockito.times(1)).saveUserTrainingInfo(Mockito.any());
+        Mockito.verify(mockService, Mockito.times(0)).saveUserTrainingInfo(Mockito.any());
     }
 
     private Update withUser(String text, int id, String name) {

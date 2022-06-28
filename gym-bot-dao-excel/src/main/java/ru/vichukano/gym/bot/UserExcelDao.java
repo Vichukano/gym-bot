@@ -115,6 +115,13 @@ public class UserExcelDao implements UserDao {
                 .orElse(BigDecimal.ZERO);
         Cell tonnageCell = tonsRow.createCell(1);
         tonnageCell.setCellValue(tonnage.doubleValue());
+        Row descriptionRow = sheet.createRow(++position);
+        Cell descName = descriptionRow.createCell(0);
+        descName.setCellStyle(headerStyle);
+        descName.setCellValue("Description");
+        Cell descValue = descriptionRow.createCell(1);
+        final Training last = lastTraining(user.getTrainings());
+        descValue.setCellValue(last.getDescription());
         String fileName = path + user.getId() + user.getName() + FILE_TYPE;
         try (var out = new FileOutputStream(fileName + NEW)) {
             workbook.write(out);
@@ -156,6 +163,14 @@ public class UserExcelDao implements UserDao {
                 .reduce((first, second) -> second)
                 .map(Training::getExercises)
                 .orElse(Collections.emptyList());
+    }
+
+    private Training lastTraining(Collection<Training> trainings) {
+        return Stream.ofNullable(trainings)
+          .flatMap(Collection::stream)
+          .filter(Objects::nonNull)
+          .reduce((f, s) -> s)
+          .orElseThrow();
     }
 
     private void makeBold(Cell cell, final Workbook workbook) {
