@@ -10,6 +10,8 @@ import akka.actor.typed.javadsl.Receive;
 import lombok.Value;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import ru.vichukano.gym.bot.actors.StopActor.AddTrainingDescription;
 import ru.vichukano.gym.bot.domain.State;
 import ru.vichukano.gym.bot.domain.dto.User;
 import ru.vichukano.gym.bot.factory.KeyboardFactory;
@@ -95,8 +97,10 @@ public class DispatcherActor extends AbstractBehavior<DispatcherActor.Dispatcher
                 startActor.tell(new StartActor.StartTraining(update, user, mainActor));
             } else if (CANCEL.getCommand().equals(text)) {
                 cancelActor.tell(new CancelActor.CancelExercise(update, user, mainActor));
-            } else if (STOP.getCommand().equals(text)) {
+            } else if (State.STOP == user.getState()) {
                 stopActor.tell(new StopActor.StopTraining(update, user, userActors.get(user.getId()), mainActor));
+            } else if(STOP.getCommand().equals(text)) {
+                stopActor.tell(new AddTrainingDescription(update, user, userActors.get(user.getId()), mainActor));
             } else if (EXERCISE.getCommand().equals(text)) {
                 exerciseActor.tell(new ExerciseActor.SelectExercise(update, user, mainActor));
             } else if (State.SELECT_EXERCISE == user.getState()) {

@@ -1,18 +1,25 @@
 package ru.vichukano.gym.bot.domain.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.vichukano.gym.bot.domain.State;
 
 import java.util.Objects;
 
 @Data
-@AllArgsConstructor
 public class User {
     private final String id;
     private final String name;
     private final Training training;
     private State state;
+    private String trainingDescription;
+    
+    public User(String id, String name, Training training, State state) {
+         this.id = id;
+         this.name = name;
+         this.training = training;
+         this.state = state;
+         this.trainingDescription = "";
+    }
 
     @Override
     public boolean equals(Object o) {

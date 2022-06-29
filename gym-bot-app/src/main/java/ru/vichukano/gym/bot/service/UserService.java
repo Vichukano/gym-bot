@@ -24,7 +24,7 @@ public class UserService {
         List<Exercise> exercises = user.getTraining().getExercises().stream()
                 .map(exc -> new Exercise(exc.getName(), exc.getWeights(), exc.getReps()))
                 .collect(Collectors.toList());
-        var training = new Training(user.getTraining().getTime(), exercises);
+        var training = new Training(user.getTraining().getTime(), user.getTrainingDescription(), exercises);
         SavedUser forSave = new SavedUser(user.getId(), user.getName(), new ArrayList<>());
         forSave.getTrainings().add(training);
         userDao.saveOrUpdate(forSave);

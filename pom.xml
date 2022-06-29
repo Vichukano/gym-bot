@@ -6,7 +6,7 @@
 
     <groupId>ru.vichukano</groupId>
     <artifactId>gym-bot</artifactId>
-    <version>1.4.1</version>
+    <version>1.5.1</version>
     <modules>
         <module>gym-bot-app</module>
         <module>gym-bot-dao</module>

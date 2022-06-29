@@ -8,5 +8,6 @@ import java.util.List;
 @Value
 public class Training {
     LocalDateTime time;
+    String description;
     List<Exercise> exercises;
 }
