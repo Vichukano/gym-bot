@@ -51,13 +51,16 @@ public class StopActor extends AbstractBehavior<StopActor.StopCommand> {
         User user = stop.user;
         Training training = user.getTraining();
         var text = MessageUtils.text(update);
+        if (Command.STOP.getCommand().equalsIgnoreCase(text)) {
+            text = "No description";
+        }
         out.setText("Stop training. Your results:\n"
                 + "Training session time: "
                 + Duration.between(training.getTime(), LocalDateTime.now()).toMinutes()
                 + " minutes"
                 + "\nExercises:\n"
                 + training.getExercises().stream().map(Objects::toString).collect(Collectors.joining("\n"))
-                + "Training description:\n"
+                + "\nTraining description:\n"
                 + text
                 + "\ntype "
                 + Command.REPORT.getCommand()
@@ -77,8 +80,7 @@ public class StopActor extends AbstractBehavior<StopActor.StopCommand> {
         out.setChatId(MessageUtils.chatId(update));
         User user = description.user;
         user.setState(State.STOP);
-        out.setText("Write training description or skip it and type: " + Command.STOP.getCommand());
-        description.userState.tell(new UserStateActor.DestroyMessage());
+        out.setText("Write training description or type: " + Command.STOP.getCommand() + " for skip");
         description.replyTo.tell(new BotActor.ReplyMessage(out));
       return this;
     }

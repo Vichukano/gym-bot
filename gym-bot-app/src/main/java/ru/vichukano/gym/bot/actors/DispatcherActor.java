@@ -97,7 +97,7 @@ public class DispatcherActor extends AbstractBehavior<DispatcherActor.Dispatcher
                 startActor.tell(new StartActor.StartTraining(update, user, mainActor));
             } else if (CANCEL.getCommand().equals(text)) {
                 cancelActor.tell(new CancelActor.CancelExercise(update, user, mainActor));
-            } else if (STOP.getCommand().equals(text) && State.STOP == user.getState()) {
+            } else if (State.STOP == user.getState()) {
                 stopActor.tell(new StopActor.StopTraining(update, user, userActors.get(user.getId()), mainActor));
             } else if(STOP.getCommand().equals(text)) {
                 stopActor.tell(new AddTrainingDescription(update, user, userActors.get(user.getId()), mainActor));

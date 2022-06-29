@@ -77,7 +77,7 @@ public class DispatcherActorTest {
         TestProbe<BotActor.BotCommand> probe = testKit.createTestProbe();
         ActorRef<DispatcherActor.DispatcherCommand> testTarget = testKit.spawn(DispatcherActor.create(probe.getRef(), mockService), "test-4");
         Update update = withUser(STOP.getCommand(), 1, "name");
-        SendMessage out = ModelFactory.message("Write training description or skip it and type: " + Command.STOP.getCommand());
+        SendMessage out = ModelFactory.message("Write training description or type: " + Command.STOP.getCommand() + " for skip");
 
         testTarget.tell(new DispatcherActor.DispatcherMessage(update));
 
